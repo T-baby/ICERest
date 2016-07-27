@@ -21,7 +21,7 @@ public abstract class AbstractRequest implements Request {
 
 
   public String toString() {
-    StringBuilder sb = new StringBuilder("[resty request] ");
+    StringBuilder sb = new StringBuilder("[ICEREST request] ");
     sb.append(getHttpMethod()).append(" ").append(getRestPath());
     dumpParams(sb);
     return sb.toString();
@@ -134,10 +134,10 @@ public abstract class AbstractRequest implements Request {
 
 
   /**
-   * The path on which resty is mounted.
+   * The path on which ICEREST is mounted.
    * Eg /api
    *
-   * @return the path on which resty is mounted.
+   * @return the path on which ICEREST is mounted.
    */
   protected abstract String getBasePath();
 

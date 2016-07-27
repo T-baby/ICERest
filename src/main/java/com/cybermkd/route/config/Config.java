@@ -40,13 +40,13 @@ public class Config {
 
 
   /**
-   * Call back after Resty start
+   * Call back after ICEREST start
    */
   public void afterStart() {
   }
 
   /**
-   * Call back before Resty stop
+   * Call back before ICEREST stop
    */
   public void beforeStop() {
   }

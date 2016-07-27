@@ -4,7 +4,7 @@ import java.util.Map;
 
 /**
  * Created by ice on 14-12-19.
- * A WebResult can be raised to make resty return immediately an HTTP response with a specific HTTP status.
+ * A WebResult can be raised to make ICEREST return immediately an HTTP response with a specific HTTP status.
  */
 public class WebResult<T> {
 

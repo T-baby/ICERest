@@ -100,7 +100,7 @@ public abstract class ExceptionHolder {
           } else {
             isHandled[0] = false;
             if (logger.isWarnEnabled()) {
-              logger.warn("Resty not handle this request.");
+              logger.warn("ICEREST not handle this request.");
             }
           }
         }

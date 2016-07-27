@@ -49,33 +49,33 @@ public interface Request {
   String getBaseNetworkPath();
 
   /**
-   * Returns the resty portion of the request path.
+   * Returns the ICEREST portion of the request path.
    * <p>
    * If incoming request is http://mydomain.com/api/myresource/test?q=test and baseUri is http://mydomain.com/api,
-   * then resty path will be /myresource/test
+   * then ICEREST path will be /myresource/test
    * </p>
    *
-   * @return the resty portion of the request path.
+   * @return the ICEREST portion of the request path.
    */
   String getRestPath();
 
 
   /**
-   * Returns the resty portion of the webRoot  physical path.
+   * Returns the ICEREST portion of the webRoot  physical path.
    *
    * @param path webRoot relative path
-   * @return the resty portion of the  webRoot  physical path.
+   * @return the ICEREST portion of the  webRoot  physical path.
    */
   String getRealPath(String path);
 
   /**
-   * Returns the resty portion of the full request uri.
+   * Returns the ICEREST portion of the full request uri.
    * <p>
    * If incoming request is http://mydomain.com/api/myresource/test?q=test and baseUri is http://mydomain.com/api,
-   * then resty uri will be /myresource/test?q=test
+   * then ICEREST uri will be /myresource/test?q=test
    * </p>
    *
-   * @return the resty portion of the full request uri.
+   * @return the ICEREST portion of the full request uri.
    */
   String getRestUri();
 

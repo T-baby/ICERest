@@ -4,7 +4,7 @@ import com.cybermkd.common.http.result.HttpStatus;
 
 /**
  * Created by ice on 14-12-19.
- * A WebException can be raised to make resty return immediately an HTTP response with a specific HTTP status.
+ * A WebException can be raised to make ICEREST return immediately an HTTP response with a specific HTTP status.
  */
 public class WebException extends RuntimeException {
 

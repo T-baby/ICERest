@@ -19,14 +19,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Resty framework filter
+ * ICEREST framework filter
  */
-public final class RestyFilter implements Filter {
+public final class RestFilter implements Filter {
 
   public static final String PARAM_NAME_CONFIGCLASS = "configClass";
   public static final String PARAM_NAME_EXCLUSIONS = "exclusions";
-  private static final Logger logger = Logger.getLogger(RestyFilter.class);
-  private RestyIniter restyIniter;
+  private static final Logger logger = Logger.getLogger(RestFilter.class);
+  private RestIniter restIniter;
   private Handler handler;
   private String encoding = Constant.encoding;
   private Set<String> excludesPattern;
@@ -40,8 +40,8 @@ public final class RestyFilter implements Filter {
     }
     try {
       Config config = createConfig(filterConfig.getInitParameter(PARAM_NAME_CONFIGCLASS));
-      restyIniter = new RestyIniter(config, filterConfig.getServletContext());
-      handler = restyIniter.getHandler();
+      restIniter = new RestIniter(config, filterConfig.getServletContext());
+      handler = restIniter.getHandler();
     } catch (Exception e) {
       throw new ServletException(e.getMessage(), e);
     }
@@ -68,11 +68,11 @@ public final class RestyFilter implements Filter {
   public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
     if (!(servletRequest instanceof HttpServletRequest)
         || !(servletResponse instanceof HttpServletResponse)) {
-      throw new ServletException("Resty doesn't support non-HTTP request or response.");
+      throw new ServletException("ICEREST doesn't support non-HTTP request or response.");
     }
     servletRequest.setCharacterEncoding(encoding);
     servletResponse.setCharacterEncoding(encoding);
-    HttpRequest request = new HttpRequest((HttpServletRequest) servletRequest, restyIniter.getServletContext());
+    HttpRequest request = new HttpRequest((HttpServletRequest) servletRequest, restIniter.getServletContext());
     HttpResponse response = new HttpResponse((HttpServletResponse) servletResponse, (HttpServletRequest) servletRequest);
 
     boolean[] isHandled = {false};
@@ -93,7 +93,7 @@ public final class RestyFilter implements Filter {
 
   public void destroy() {
     try {
-      restyIniter.stop();
+      restIniter.stop();
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
     }

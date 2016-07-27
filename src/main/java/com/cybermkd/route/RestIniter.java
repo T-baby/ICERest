@@ -9,16 +9,16 @@ import com.cybermkd.route.handler.HandlerFactory;
 import javax.servlet.ServletContext;
 
 /**
- * Resty
+ * ICEREST
  */
-public final class RestyIniter {
+public final class RestIniter {
 
   private ConfigIniter configIniter;
   private Handler handler;
   private ServletContext servletContext;
   private Config config;
 
-  public RestyIniter(Config config, ServletContext servletContext) {
+  public RestIniter(Config config, ServletContext servletContext) {
     this.servletContext = servletContext;
     this.config = config;
     configIniter = new ConfigIniter(config);

@@ -13,7 +13,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 
 /**
- * Resty  client
+ * ICEREST  client
  */
 public class HttpClient extends HttpClientConnection {
 

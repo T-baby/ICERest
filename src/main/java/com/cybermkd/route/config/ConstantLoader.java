@@ -13,7 +13,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import java.lang.reflect.Type;
 
 /**
- * The constant for Resty runtime.
+ * The constant for ICEREST runtime.
  */
 final public class ConstantLoader {
 

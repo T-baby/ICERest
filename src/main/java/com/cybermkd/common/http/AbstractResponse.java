@@ -141,7 +141,7 @@ public abstract class AbstractResponse<R> implements Response {
 
 
   public String toString() {
-    return "[Resty response] " + status;
+    return "[ICEREST response] " + status;
   }
 
 
