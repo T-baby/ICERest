@@ -16,102 +16,102 @@ import java.io.OutputStream;
  * Time: 9:40 PM
  */
 public class HttpResponse extends AbstractResponse<HttpServletResponse> {
-  private final HttpServletResponse response;
-  private final HttpServletRequest request;
+    private final HttpServletResponse response;
+    private final HttpServletRequest request;
 
-  public HttpResponse(HttpServletResponse response, HttpServletRequest request) {
-    super(HttpServletResponse.class, response);
-    this.response = response;
-    this.request = request;
-  }
-
-
-  protected void doSetStatus(HttpStatus httpStatus) {
-    response.setStatus(httpStatus.getCode());
-  }
+    public HttpResponse(HttpServletResponse response, HttpServletRequest request) {
+        super(HttpServletResponse.class, response);
+        this.response = response;
+        this.request = request;
+    }
 
 
-  protected OutputStream doGetOutputStream() throws IOException {
-    return response.getOutputStream();
-  }
+    protected void doSetStatus(HttpStatus httpStatus) {
+        response.setStatus(httpStatus.getCode());
+    }
 
-  public Response addCookie(String name, String value, int expiration) {
-    return addCookie(name, value, expiration, true);
-  }
 
-  public Response addCookie(String name, String value, int expiration, boolean httpOnly) {
-    Cookie existingCookie = HttpRequest.getCookie(request.getCookies(), name);
-    if (existingCookie != null) {
-      if ("/".equals(existingCookie.getPath())
-          || existingCookie.getPath() == null // in some cases cookies set on path '/' are returned with a null path
-          ) {
-        // update existing cookie
-        existingCookie.setPath("/");
-        existingCookie.setValue(value);
-        existingCookie.setMaxAge(expiration);
+    protected OutputStream doGetOutputStream() throws IOException {
+        return response.getOutputStream();
+    }
+
+    public Response addCookie(String name, String value, int expiration) {
+        return addCookie(name, value, expiration, true);
+    }
+
+    public Response addCookie(String name, String value, int expiration, boolean httpOnly) {
+        Cookie existingCookie = HttpRequest.getCookie(request.getCookies(), name);
+        if (existingCookie != null) {
+            if ("/".equals(existingCookie.getPath())
+                    || existingCookie.getPath() == null // in some cases cookies set on path '/' are returned with a null path
+                    ) {
+                // update existing cookie
+                existingCookie.setPath("/");
+                existingCookie.setValue(value);
+                existingCookie.setMaxAge(expiration);
 //        existingCookie.setHttpOnly(httpOnly);
-        response.addCookie(existingCookie);
-      } else {
-        // we have an existing cookie on another path: clear it, and add a new cookie on root path
-        existingCookie.setValue("");
-        existingCookie.setMaxAge(0);
-        response.addCookie(existingCookie);
+                response.addCookie(existingCookie);
+            } else {
+                // we have an existing cookie on another path: clear it, and add a new cookie on root path
+                existingCookie.setValue("");
+                existingCookie.setMaxAge(0);
+                response.addCookie(existingCookie);
 
-        Cookie c = new Cookie(name, value);
-        c.setPath("/");
-        c.setMaxAge(expiration);
+                Cookie c = new Cookie(name, value);
+                c.setPath("/");
+                c.setMaxAge(expiration);
 //        c.setHttpOnly(httpOnly);
-        response.addCookie(c);
-      }
-    } else {
-      Cookie c = new Cookie(name, value);
-      c.setPath("/");
-      c.setMaxAge(expiration);
+                response.addCookie(c);
+            }
+        } else {
+            Cookie c = new Cookie(name, value);
+            c.setPath("/");
+            c.setMaxAge(expiration);
 //      c.setHttpOnly(httpOnly);
-      response.addCookie(c);
+            response.addCookie(c);
+        }
+        return this;
     }
-    return this;
-  }
 
 
-  public Response clearCookie(String cookie) {
-    Cookie existingCookie = HttpRequest.getCookie(request.getCookies(), cookie);
-    if (existingCookie != null) {
-      existingCookie.setPath("/");
-      existingCookie.setValue("");
-      existingCookie.setMaxAge(0);
-      response.addCookie(existingCookie);
+    public Response clearCookie(String cookie) {
+        Cookie existingCookie = HttpRequest.getCookie(request.getCookies(), cookie);
+        if (existingCookie != null) {
+            existingCookie.setPath("/");
+            existingCookie.setValue("");
+            existingCookie.setMaxAge(0);
+            response.addCookie(existingCookie);
+        }
+        return this;
     }
-    return this;
-  }
 
 
-  public void doSetHeader(String headerName, String header) {
-    response.setHeader(headerName, header);
-  }
-
-  public void doAddHeader(String headerName, String header) {
-    response.addHeader(headerName, header);
-  }
-
-  public void forward(String url) throws ServletException, IOException {
-    request.getRequestDispatcher(url).forward(request, response);
-  }
-
-  public void sendRedirect(String url) throws ServletException, IOException {
-    response.sendRedirect(url);
-  }
-
-  @SuppressWarnings("unchecked")
-  public <T> T unwrap(Class<T> clazz) {
-    if (clazz == HttpServletResponse.class || clazz == ServletResponse.class) {
-      return (T) response;
+    public void doSetHeader(String headerName, String header) {
+        response.setHeader(headerName, header);
     }
-    throw new IllegalArgumentException("Underlying implementation is HttpServletResponse, not " + clazz.getName());
-  }
 
-  public void reset() {
-    response.reset();
-  }
+    public void doAddHeader(String headerName, String header) {
+        response.addHeader(headerName, header);
+    }
+
+    public void forward(String url) throws ServletException, IOException {
+        request.getRequestDispatcher(url).forward(request, response);
+    }
+
+    public void sendRedirect(String url) throws ServletException, IOException {
+        response.sendRedirect(url);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T unwrap(Class<T> clazz) {
+        if (clazz == HttpServletResponse.class || clazz == ServletResponse.class) {
+            return (T) response;
+        }
+        throw new IllegalArgumentException("Underlying implementation is HttpServletResponse, not " + clazz.getName());
+    }
+
+    public void reset() {
+        response.reset();
+    }
 
 }

@@ -16,206 +16,206 @@ import java.util.*;
  * Time: 2:52 PM
  */
 public class HttpRequest extends AbstractRequest {
-  private final HttpServletRequest request;
-  private final ServletContext servletContext;
-  private Map<String, List<String>> queryParams;
+    private final HttpServletRequest request;
+    private final ServletContext servletContext;
+    private Map<String, List<String>> queryParams;
 
-  public HttpRequest(HttpServletRequest request, ServletContext servletContext) {
-    this.request = request;
-    this.servletContext = servletContext;
-  }
-
-  private static String getCookieValue(Cookie[] cookies, String name) {
-    if (cookies == null) {
-      return null;
+    public HttpRequest(HttpServletRequest request, ServletContext servletContext) {
+        this.request = request;
+        this.servletContext = servletContext;
     }
-    for (Cookie cookie : cookies) {
-      if (name.equals(cookie.getName()))
-        return cookie.getValue();
+
+    private static String getCookieValue(Cookie[] cookies, String name) {
+        if (cookies == null) {
+            return null;
+        }
+        for (Cookie cookie : cookies) {
+            if (name.equals(cookie.getName()))
+                return cookie.getValue();
+        }
+        return null;
     }
-    return null;
-  }
 
-  static Cookie getCookie(Cookie[] cookies, String name) {
-    if (cookies == null) {
-      return null;
+    static Cookie getCookie(Cookie[] cookies, String name) {
+        if (cookies == null) {
+            return null;
+        }
+        for (Cookie cookie : cookies) {
+            if (name.equals(cookie.getName()))
+                return cookie;
+        }
+        return null;
     }
-    for (Cookie cookie : cookies) {
-      if (name.equals(cookie.getName()))
-        return cookie;
+
+    public String getLocalClientAddress() {
+        return request.getRemoteAddr();
     }
-    return null;
-  }
 
-  public String getLocalClientAddress() {
-    return request.getRemoteAddr();
-  }
-
-  protected String getBasePath() {
-    return request.getContextPath();
-  }
-
-  protected String getLocalScheme() {
-    return request.getScheme();
-  }
-
-  public String getRestPath() {
-    String basepath = getBasePath();
-    String requestURI = request.getRequestURI();
-    if (basepath.length() > 0) {
-      requestURI = request.getRequestURI().substring(basepath.length());
+    protected String getBasePath() {
+        return request.getContextPath();
     }
-    int index = requestURI.toLowerCase().indexOf(";jsessionid=");
-    if (index != -1) {
-      requestURI = requestURI.substring(0, index);
+
+    protected String getLocalScheme() {
+        return request.getScheme();
     }
-    try {
-      return URLDecoder.decode(requestURI, getCharacterEncoding());
-    } catch (UnsupportedEncodingException e) {
-      throw new IllegalArgumentException("Invalid character encoding for '" + getCharacterEncoding() + "'");
+
+    public String getRestPath() {
+        String basepath = getBasePath();
+        String requestURI = request.getRequestURI();
+        if (basepath.length() > 0) {
+            requestURI = request.getRequestURI().substring(basepath.length());
+        }
+        int index = requestURI.toLowerCase().indexOf(";jsessionid=");
+        if (index != -1) {
+            requestURI = requestURI.substring(0, index);
+        }
+        try {
+            return URLDecoder.decode(requestURI, getCharacterEncoding());
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException("Invalid character encoding for '" + getCharacterEncoding() + "'");
+        }
     }
-  }
 
-  public String getRealPath(String path) {
-    return servletContext.getRealPath(path);
-  }
-
-  public String getRestUri() {
-    String queryString = getQueryString();
-    if (queryString == null) {
-      return getRestPath();
-    } else {
-      return getRestPath() + "?" + queryString;
+    public String getRealPath(String path) {
+        return servletContext.getRealPath(path);
     }
-  }
 
-  public String getQueryParam(String param) {
-    return request.getParameter(param);
-  }
-
-  public List<String> getQueryParams(String param) {
-    String[] values = request.getParameterValues(param);
-    if (values != null)
-      return Arrays.asList(values);
-    else
-      return null;
-  }
-
-  public Map<String, List<String>> getQueryParams() {
-    if (queryParams == null) {
-      Map<String, String[]> paramMap = getParamMap();
-      Map<String, List<String>> params = new HashMap<String, List<String>>();
-      for (Map.Entry<String, String[]> entry : paramMap.entrySet()) {
-        params.put(entry.getKey(), Arrays.asList(entry.getValue()));
-      }
-      queryParams = params;
+    public String getRestUri() {
+        String queryString = getQueryString();
+        if (queryString == null) {
+            return getRestPath();
+        } else {
+            return getRestPath() + "?" + queryString;
+        }
     }
-    return queryParams;
-  }
 
-  protected Map<String, String[]> getParamMap() {
-    return request.getParameterMap();
-  }
-
-  public int getContentLength() {
-    return request.getContentLength();
-  }
-
-  public InputStream getContentStream() throws IOException {
-    return request.getInputStream();
-  }
-
-  public String getHttpMethod() {
-    String httpMethod = request.getMethod();
-    if (httpMethod == null) {
-      throw new IllegalArgumentException("Invalid HTTP Method for " + getRestPath());
+    public String getQueryParam(String param) {
+        return request.getParameter(param);
     }
-    return httpMethod;
-  }
 
-  public Map<String, String> getCookiesMap() {
-    Map<String, String> cookies = new LinkedHashMap<String, String>();
-    Cookie[] requestCookies = request.getCookies();
-    if (requestCookies != null) {
-      for (Cookie cookie : requestCookies) {
-        cookies.put(cookie.getName(), cookie.getValue());
-      }
+    public List<String> getQueryParams(String param) {
+        String[] values = request.getParameterValues(param);
+        if (values != null)
+            return Arrays.asList(values);
+        else
+            return null;
     }
-    return cookies;
-  }
 
-  public String getCookieValue(String name) {
-    return getCookieValue(request.getCookies(), name);
-  }
-
-  public boolean isPersistentCookie(String cookie) {
-    Cookie c = getCookie(request.getCookies(), cookie);
-    return c != null && c.getMaxAge() > 0;
-  }
-
-  public String getQueryString() {
-    try {
-      String queryString = request.getQueryString();
-      if (queryString != null && !"".equals(queryString)) {
-        return URLDecoder.decode(request.getQueryString(), getCharacterEncoding());
-      } else {
-        return queryString;
-      }
-    } catch (UnsupportedEncodingException e) {
-      throw new IllegalArgumentException("Invalid character encoding for '" + getCharacterEncoding() + "'");
+    public Map<String, List<String>> getQueryParams() {
+        if (queryParams == null) {
+            Map<String, String[]> paramMap = getParamMap();
+            Map<String, List<String>> params = new HashMap<String, List<String>>();
+            for (Map.Entry<String, String[]> entry : paramMap.entrySet()) {
+                params.put(entry.getKey(), Arrays.asList(entry.getValue()));
+            }
+            queryParams = params;
+        }
+        return queryParams;
     }
-  }
 
-  public RequestDispatcher getRequestDispatcher(String url) {
-    return request.getRequestDispatcher(url);
-  }
-
-  public String getHeader(String name) {
-    return request.getHeader(name);
-  }
-
-  public Enumeration<String> getHeaders(String name) {
-    return request.getHeaders(name);
-  }
-
-  public Map<String, String> getHeaders() {
-    Map<String, String> map = new HashMap<String, String>();
-    Enumeration headerNames = request.getHeaderNames();
-    while (headerNames.hasMoreElements()) {
-      String key = (String) headerNames.nextElement();
-      String value = request.getHeader(key);
-      map.put(key, value);
+    protected Map<String, String[]> getParamMap() {
+        return request.getParameterMap();
     }
-    return map;
-  }
 
-  public String getContentType() {
-    return request.getContentType();
-  }
-
-
-  @SuppressWarnings("unchecked")
-  public <T> T unwrap(Class<T> clazz) {
-    if (clazz == HttpServletRequest.class || clazz == ServletRequest.class) {
-      return (T) request;
+    public int getContentLength() {
+        return request.getContentLength();
     }
-    throw new IllegalArgumentException("underlying implementation is HttpServletRequest, not " + clazz.getName());
-  }
+
+    public InputStream getContentStream() throws IOException {
+        return request.getInputStream();
+    }
+
+    public String getHttpMethod() {
+        String httpMethod = request.getMethod();
+        if (httpMethod == null) {
+            throw new IllegalArgumentException("Invalid HTTP Method for " + getRestPath());
+        }
+        return httpMethod;
+    }
+
+    public Map<String, String> getCookiesMap() {
+        Map<String, String> cookies = new LinkedHashMap<String, String>();
+        Cookie[] requestCookies = request.getCookies();
+        if (requestCookies != null) {
+            for (Cookie cookie : requestCookies) {
+                cookies.put(cookie.getName(), cookie.getValue());
+            }
+        }
+        return cookies;
+    }
+
+    public String getCookieValue(String name) {
+        return getCookieValue(request.getCookies(), name);
+    }
+
+    public boolean isPersistentCookie(String cookie) {
+        Cookie c = getCookie(request.getCookies(), cookie);
+        return c != null && c.getMaxAge() > 0;
+    }
+
+    public String getQueryString() {
+        try {
+            String queryString = request.getQueryString();
+            if (queryString != null && !"".equals(queryString)) {
+                return URLDecoder.decode(request.getQueryString(), getCharacterEncoding());
+            } else {
+                return queryString;
+            }
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException("Invalid character encoding for '" + getCharacterEncoding() + "'");
+        }
+    }
+
+    public RequestDispatcher getRequestDispatcher(String url) {
+        return request.getRequestDispatcher(url);
+    }
+
+    public String getHeader(String name) {
+        return request.getHeader(name);
+    }
+
+    public Enumeration<String> getHeaders(String name) {
+        return request.getHeaders(name);
+    }
+
+    public Map<String, String> getHeaders() {
+        Map<String, String> map = new HashMap<String, String>();
+        Enumeration headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String key = (String) headerNames.nextElement();
+            String value = request.getHeader(key);
+            map.put(key, value);
+        }
+        return map;
+    }
+
+    public String getContentType() {
+        return request.getContentType();
+    }
 
 
-  public Locale getLocale() {
-    return request.getLocale();
-  }
+    @SuppressWarnings("unchecked")
+    public <T> T unwrap(Class<T> clazz) {
+        if (clazz == HttpServletRequest.class || clazz == ServletRequest.class) {
+            return (T) request;
+        }
+        throw new IllegalArgumentException("underlying implementation is HttpServletRequest, not " + clazz.getName());
+    }
 
-  public List<Locale> getLocales() {
-    return Collections.list((request.getLocales()));
-  }
 
-  public String getCharacterEncoding() {
-    return request.getCharacterEncoding();
-  }
+    public Locale getLocale() {
+        return request.getLocale();
+    }
 
-  public void setCharacterEncoding(String encoding) throws UnsupportedEncodingException {
-    request.setCharacterEncoding(encoding);
-  }
+    public List<Locale> getLocales() {
+        return Collections.list((request.getLocales()));
+    }
+
+    public String getCharacterEncoding() {
+        return request.getCharacterEncoding();
+    }
+
+    public void setCharacterEncoding(String encoding) throws UnsupportedEncodingException {
+        request.setCharacterEncoding(encoding);
+    }
 }

@@ -12,13 +12,13 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 @Documented
 public @interface GET {
-  String value() default "";
+    String value() default "";
 
-  String[] headers() default {};
+    String[] headers() default {};
 
-  String des() default "";
+    String des() default "";
 
-  Class<? extends Validator>[] valid() default {};
+    Class<? extends Validator>[] valid() default {};
 
-  boolean cached() default true;
+    boolean cached() default true;
 }

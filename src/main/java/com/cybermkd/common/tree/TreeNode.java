@@ -9,11 +9,11 @@ import java.util.Collection;
  */
 public interface TreeNode<T> {
 
-  public long getId();
+    public long getId();
 
-  public long getPid();
+    public long getPid();
 
-  public Collection<T> getChildren();
+    public Collection<T> getChildren();
 
-  public void setChildren(Collection<T> children);
+    public void setChildren(Collection<T> children);
 }

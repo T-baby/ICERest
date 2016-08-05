@@ -11,16 +11,16 @@ import java.util.List;
  */
 final public class InterceptorLoader {
 
-  private final List<Interceptor> interceptorList = new ArrayList<Interceptor>();
+    private final List<Interceptor> interceptorList = new ArrayList<Interceptor>();
 
-  public InterceptorLoader add(Interceptor interceptor) {
-    if (interceptor != null)
-      this.interceptorList.add(interceptor);
-    return this;
-  }
+    public InterceptorLoader add(Interceptor interceptor) {
+        if (interceptor != null)
+            this.interceptorList.add(interceptor);
+        return this;
+    }
 
-  public Interceptor[] getInterceptorArray() {
-    Interceptor[] result = interceptorList.toArray(new Interceptor[interceptorList.size()]);
-    return result;
-  }
+    public Interceptor[] getInterceptorArray() {
+        Interceptor[] result = interceptorList.toArray(new Interceptor[interceptorList.size()]);
+        return result;
+    }
 }

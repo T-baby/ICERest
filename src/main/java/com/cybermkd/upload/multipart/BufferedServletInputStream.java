@@ -25,175 +25,175 @@ import java.io.InputStream;
  */
 public class BufferedServletInputStream extends ServletInputStream {
 
-  /**
-   * input stream we are filtering
-   */
-  private InputStream in;
+    /**
+     * input stream we are filtering
+     */
+    private InputStream in;
 
-  /**
-   * our buffer
-   */
-  private byte[] buf = new byte[64 * 1024];  // 64k
+    /**
+     * our buffer
+     */
+    private byte[] buf = new byte[64 * 1024];  // 64k
 
-  /**
-   * number of bytes we've read into the buffer
-   */
-  private int count;
+    /**
+     * number of bytes we've read into the buffer
+     */
+    private int count;
 
-  /**
-   * current position in the buffer
-   */
-  private int pos;
+    /**
+     * current position in the buffer
+     */
+    private int pos;
 
-  /**
-   * Creates a <code>BufferedServletInputStream</code> that wraps the provided
-   * <code>ServletInputStream</code>.
-   *
-   * @param in a servlet input stream.
-   */
-  public BufferedServletInputStream(InputStream in) {
-    this.in = in;
-  }
-
-  /**
-   * Attempt to find the '\n' end of line marker as defined in the comment of
-   * the <code>readLine</code> method of <code>ServletInputStream</code>.
-   *
-   * @param b   byte array to scan.
-   * @param pos position in byte array to scan from.
-   * @param len maximum number of bytes to scan.
-   * @return the number of bytes including the \n, or -1 if none found.
-   */
-  private static int findeol(byte b[], int pos, int len) {
-    int end = pos + len;
-    int i = pos;
-    while (i < end) {
-      if (b[i++] == '\n') {
-        return i - pos;
-      }
-    }
-    return -1;
-  }
-
-  /**
-   * Fill up our buffer from the underlying input stream. Users of this
-   * method must ensure that they use all characters in the buffer before
-   * calling this method.
-   *
-   * @throws IOException if an I/O error occurs.
-   */
-  private void fill() throws IOException {
-    int i = in.read(buf, 0, buf.length);
-    if (i > 0) {
-      pos = 0;
-      count = i;
-    }
-  }
-
-  /**
-   * Implement buffering on top of the <code>readLine</code> method of
-   * the wrapped <code>ServletInputStream</code>.
-   *
-   * @param b   an array of bytes into which data is read.
-   * @param off an integer specifying the character at which
-   *            this method begins reading.
-   * @param len an integer specifying the maximum number of
-   *            bytes to read.
-   * @return an integer specifying the actual number of bytes
-   * read, or -1 if the end of the stream is reached.
-   * @throws IOException if an I/O error occurs.
-   */
-  public int readLine(byte b[], int off, int len) throws IOException {
-    int total = 0;
-    if (len == 0) {
-      return 0;
+    /**
+     * Creates a <code>BufferedServletInputStream</code> that wraps the provided
+     * <code>ServletInputStream</code>.
+     *
+     * @param in a servlet input stream.
+     */
+    public BufferedServletInputStream(InputStream in) {
+        this.in = in;
     }
 
-    int avail = count - pos;
-    if (avail <= 0) {
-      fill();
-      avail = count - pos;
-      if (avail <= 0) {
-        return -1;
-      }
-    }
-    int copy = Math.min(len, avail);
-    int eol = findeol(buf, pos, copy);
-    if (eol != -1) {
-      copy = eol;
-    }
-    System.arraycopy(buf, pos, b, off, copy);
-    pos += copy;
-    total += copy;
-
-    while (total < len && eol == -1) {
-      fill();
-      avail = count - pos;
-      if (avail <= 0) {
-        return total;
-      }
-      copy = Math.min(len - total, avail);
-      eol = findeol(buf, pos, copy);
-      if (eol != -1) {
-        copy = eol;
-      }
-      System.arraycopy(buf, pos, b, off + total, copy);
-      pos += copy;
-      total += copy;
-    }
-    return total;
-  }
-
-  /**
-   * Implement buffering on top of the <code>read</code> method of
-   * the wrapped <code>ServletInputStream</code>.
-   *
-   * @return the next byte of data, or <code>-1</code> if the end of the
-   * stream is reached.
-   * @throws IOException if an I/O error occurs.
-   */
-  public int read() throws IOException {
-    if (count <= pos) {
-      fill();
-      if (count <= pos) {
-        return -1;
-      }
-    }
-    return buf[pos++] & 0xff;
-  }
-
-  /**
-   * Implement buffering on top of the <code>read</code> method of
-   * the wrapped <code>ServletInputStream</code>.
-   *
-   * @param b   the buffer into which the data is read.
-   * @param off the start offset of the data.
-   * @param len the maximum number of bytes read.
-   * @return the total number of bytes read into the buffer, or
-   * <code>-1</code> if there is no more data because the end
-   * of the stream has been reached.
-   * @throws IOException if an I/O error occurs.
-   */
-  public int read(byte b[], int off, int len) throws IOException {
-    int total = 0;
-    while (total < len) {
-      int avail = count - pos;
-      if (avail <= 0) {
-        fill();
-        avail = count - pos;
-        if (avail <= 0) {
-          if (total > 0)
-            return total;
-          else
-            return -1;
+    /**
+     * Attempt to find the '\n' end of line marker as defined in the comment of
+     * the <code>readLine</code> method of <code>ServletInputStream</code>.
+     *
+     * @param b   byte array to scan.
+     * @param pos position in byte array to scan from.
+     * @param len maximum number of bytes to scan.
+     * @return the number of bytes including the \n, or -1 if none found.
+     */
+    private static int findeol(byte b[], int pos, int len) {
+        int end = pos + len;
+        int i = pos;
+        while (i < end) {
+            if (b[i++] == '\n') {
+                return i - pos;
+            }
         }
-      }
-      int copy = Math.min(len - total, avail);
-      System.arraycopy(buf, pos, b, off + total, copy);
-      pos += copy;
-      total += copy;
+        return -1;
     }
-    return total;
-  }
+
+    /**
+     * Fill up our buffer from the underlying input stream. Users of this
+     * method must ensure that they use all characters in the buffer before
+     * calling this method.
+     *
+     * @throws IOException if an I/O error occurs.
+     */
+    private void fill() throws IOException {
+        int i = in.read(buf, 0, buf.length);
+        if (i > 0) {
+            pos = 0;
+            count = i;
+        }
+    }
+
+    /**
+     * Implement buffering on top of the <code>readLine</code> method of
+     * the wrapped <code>ServletInputStream</code>.
+     *
+     * @param b   an array of bytes into which data is read.
+     * @param off an integer specifying the character at which
+     *            this method begins reading.
+     * @param len an integer specifying the maximum number of
+     *            bytes to read.
+     * @return an integer specifying the actual number of bytes
+     * read, or -1 if the end of the stream is reached.
+     * @throws IOException if an I/O error occurs.
+     */
+    public int readLine(byte b[], int off, int len) throws IOException {
+        int total = 0;
+        if (len == 0) {
+            return 0;
+        }
+
+        int avail = count - pos;
+        if (avail <= 0) {
+            fill();
+            avail = count - pos;
+            if (avail <= 0) {
+                return -1;
+            }
+        }
+        int copy = Math.min(len, avail);
+        int eol = findeol(buf, pos, copy);
+        if (eol != -1) {
+            copy = eol;
+        }
+        System.arraycopy(buf, pos, b, off, copy);
+        pos += copy;
+        total += copy;
+
+        while (total < len && eol == -1) {
+            fill();
+            avail = count - pos;
+            if (avail <= 0) {
+                return total;
+            }
+            copy = Math.min(len - total, avail);
+            eol = findeol(buf, pos, copy);
+            if (eol != -1) {
+                copy = eol;
+            }
+            System.arraycopy(buf, pos, b, off + total, copy);
+            pos += copy;
+            total += copy;
+        }
+        return total;
+    }
+
+    /**
+     * Implement buffering on top of the <code>read</code> method of
+     * the wrapped <code>ServletInputStream</code>.
+     *
+     * @return the next byte of data, or <code>-1</code> if the end of the
+     * stream is reached.
+     * @throws IOException if an I/O error occurs.
+     */
+    public int read() throws IOException {
+        if (count <= pos) {
+            fill();
+            if (count <= pos) {
+                return -1;
+            }
+        }
+        return buf[pos++] & 0xff;
+    }
+
+    /**
+     * Implement buffering on top of the <code>read</code> method of
+     * the wrapped <code>ServletInputStream</code>.
+     *
+     * @param b   the buffer into which the data is read.
+     * @param off the start offset of the data.
+     * @param len the maximum number of bytes read.
+     * @return the total number of bytes read into the buffer, or
+     * <code>-1</code> if there is no more data because the end
+     * of the stream has been reached.
+     * @throws IOException if an I/O error occurs.
+     */
+    public int read(byte b[], int off, int len) throws IOException {
+        int total = 0;
+        while (total < len) {
+            int avail = count - pos;
+            if (avail <= 0) {
+                fill();
+                avail = count - pos;
+                if (avail <= 0) {
+                    if (total > 0)
+                        return total;
+                    else
+                        return -1;
+                }
+            }
+            int copy = Math.min(len - total, avail);
+            System.arraycopy(buf, pos, b, off + total, copy);
+            pos += copy;
+            total += copy;
+        }
+        return total;
+    }
 
 }

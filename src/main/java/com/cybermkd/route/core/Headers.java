@@ -10,9 +10,9 @@ import java.util.Map;
  * @what
  */
 public class Headers extends Params {
-  public Headers(final Map<String, String> headers) {
-    super(new CaseInsensitiveMap<Object>() {{
-      putAll(headers);
-    }});
-  }
+    public Headers(final Map<String, String> headers) {
+        super(new CaseInsensitiveMap<Object>() {{
+            putAll(headers);
+        }});
+    }
 }

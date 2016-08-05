@@ -57,7 +57,7 @@ public class GzipFilter implements Filter {
         }
 
         public byte[] getOldBytes() {
-            if(pw != null){
+            if (pw != null) {
                 //确保pw里的缓冲区的数据刷到baos中  
                 pw.close();
             }

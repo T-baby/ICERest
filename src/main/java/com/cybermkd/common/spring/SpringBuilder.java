@@ -15,72 +15,72 @@ import static com.cybermkd.common.util.Checker.checkNotNull;
  */
 public class SpringBuilder {
 
-  private final static Logger logger = Logger.getLogger(SpringBuilder.class);
+    private final static Logger logger = Logger.getLogger(SpringBuilder.class);
 
-  private static ConfigurableApplicationContext context;
+    private static ConfigurableApplicationContext context;
 
-  public static ConfigurableApplicationContext getContext() {
-    return SpringBuilder.context;
-  }
-
-  public static void setContext(ConfigurableApplicationContext context) {
-    checkNotNull(context, "Could not found context for spring.");
-    SpringBuilder.context = context;
-    SpringHolder.alive = true;
-  }
-
-  public static void refreshContext() {
-    if (SpringHolder.alive) {
-      SpringBuilder.context.refresh();
+    public static ConfigurableApplicationContext getContext() {
+        return SpringBuilder.context;
     }
-  }
 
-  public static void removeContext() {
-    if (SpringHolder.alive) {
-      SpringBuilder.context.close();
-      SpringBuilder.context = null;
-      SpringHolder.alive = false;
+    public static void setContext(ConfigurableApplicationContext context) {
+        checkNotNull(context, "Could not found context for spring.");
+        SpringBuilder.context = context;
+        SpringHolder.alive = true;
     }
-  }
 
-  /**
-   * 注册bean
-   *
-   * @param clazz
-   */
-  public static void register(Class clazz) {
-    ConfigurableApplicationContext context = getContext();
-    if (context != null) {
-      DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory) context.getBeanFactory();
-      String beanName = Stringer.firstLowerCase(clazz.getSimpleName());
-      beanFactory.registerBeanDefinition(beanName, BeanDefinitionBuilder.rootBeanDefinition(clazz).getBeanDefinition());
+    public static void refreshContext() {
+        if (SpringHolder.alive) {
+            SpringBuilder.context.refresh();
+        }
     }
-  }
 
-  public static void registerSingleton(Class clazz) {
-    try {
-      registerSingleton(clazz, clazz.newInstance());
-    } catch (InstantiationException e) {
-      logger.error(e.getMessage(), e);
-    } catch (IllegalAccessException e) {
-      logger.error(e.getMessage(), e);
+    public static void removeContext() {
+        if (SpringHolder.alive) {
+            SpringBuilder.context.close();
+            SpringBuilder.context = null;
+            SpringHolder.alive = false;
+        }
     }
-  }
 
-  public static void registerSingleton(Class clazz, Object bean) {
-    ConfigurableApplicationContext context = getContext();
-    if (context != null) {
-      DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory) context.getBeanFactory();
-      String beanName = Stringer.firstLowerCase(clazz.getSimpleName());
-      beanFactory.registerSingleton(beanName, bean);
+    /**
+     * 注册bean
+     *
+     * @param clazz
+     */
+    public static void register(Class clazz) {
+        ConfigurableApplicationContext context = getContext();
+        if (context != null) {
+            DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory) context.getBeanFactory();
+            String beanName = Stringer.firstLowerCase(clazz.getSimpleName());
+            beanFactory.registerBeanDefinition(beanName, BeanDefinitionBuilder.rootBeanDefinition(clazz).getBeanDefinition());
+        }
     }
-  }
 
-  public static <T> T getBean(Class<T> clazz) {
-    ConfigurableApplicationContext context = getContext();
-    if (context != null) {
-      return context.getBean(clazz);
+    public static void registerSingleton(Class clazz) {
+        try {
+            registerSingleton(clazz, clazz.newInstance());
+        } catch (InstantiationException e) {
+            logger.error(e.getMessage(), e);
+        } catch (IllegalAccessException e) {
+            logger.error(e.getMessage(), e);
+        }
     }
-    return null;
-  }
+
+    public static void registerSingleton(Class clazz, Object bean) {
+        ConfigurableApplicationContext context = getContext();
+        if (context != null) {
+            DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory) context.getBeanFactory();
+            String beanName = Stringer.firstLowerCase(clazz.getSimpleName());
+            beanFactory.registerSingleton(beanName, bean);
+        }
+    }
+
+    public static <T> T getBean(Class<T> clazz) {
+        ConfigurableApplicationContext context = getContext();
+        if (context != null) {
+            return context.getBean(clazz);
+        }
+        return null;
+    }
 }

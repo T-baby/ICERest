@@ -5,11 +5,10 @@ package com.cybermkd.waf.attack;
  */
 public interface Istrip {
 
-	/**
-	 * @Description 脚本内容剥离
-	 * @param value
-	 * 				待处理内容
-	 * @return
-	 */
-	public String strip(String value);
+    /**
+     * @param value 待处理内容
+     * @return
+     * @Description 脚本内容剥离
+     */
+    public String strip(String value);
 }
