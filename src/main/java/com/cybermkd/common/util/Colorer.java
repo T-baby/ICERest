@@ -1,5 +1,6 @@
 package com.cybermkd.common.util;
 
+import com.cybermkd.common.Constant;
 import org.fusesource.jansi.Ansi;
 
 /**
@@ -42,19 +43,14 @@ public class Colorer {
     }
 
     private static String diy(String color, String value) {
-        return String.valueOf(Ansi.ansi().eraseScreen().render("@|" + color + " " + value + "|@"));
+        if (Constant.devMode){
+            return String.valueOf(Ansi.ansi().eraseScreen().render("@|" + color + " " + value + "|@"));
+        }else {
+            return value;
+        }
+
     }
 
-    public static void main(String[] args){
-        System.out.println(white("测试颜色"));
-        System.out.println(black("测试颜色"));
-        System.out.println(green("测试颜色"));
-        System.out.println(yellow("测试颜色"));
-        System.out.println(magenta("测试颜色"));
-        System.out.println(cyan("测试颜色"));
-        System.out.println(blue("测试颜色"));
-        System.out.println(red("测试颜色"));
-    }
 
 
 }
