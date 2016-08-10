@@ -73,4 +73,8 @@ public class ValidResult {
         return this;
     }
 
+    public boolean isError(){
+        return errors.size() > 0;
+    }
+
 }
