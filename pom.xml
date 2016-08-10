@@ -106,6 +106,16 @@
             <scope>provided</scope>
         </dependency>
 
+
+
+        <dependency>
+            <groupId>com.cybermkd</groupId>
+            <artifactId>MongodbPlugin</artifactId>
+            <version>1.0.6</version>
+            <scope>provided</scope>
+        </dependency>
+
+
         <!--让输出更有趣-->
         <dependency>
             <groupId>org.fusesource.jansi</groupId>

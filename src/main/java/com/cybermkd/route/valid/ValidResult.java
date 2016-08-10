@@ -1,6 +1,9 @@
 package com.cybermkd.route.valid;
 
 import com.cybermkd.common.http.result.HttpStatus;
+import com.cybermkd.common.util.Stringer;
+import com.cybermkd.kit.MongoKit;
+import com.cybermkd.kit.MongoValidate;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,4 +47,30 @@ public class ValidResult {
     public void setStatus(HttpStatus status) {
         this.status = status;
     }
+
+
+    public ValidResult mongoValid(MongoValidate validate,String... keys){
+        return this.mongoValid(validate, "100",keys);
+    }
+    public ValidResult mongoValid(MongoValidate validate, Object errorValue,String... keys){
+        String validateErrorMessage = MongoKit.validation(validate,keys);
+        if(Stringer.isBlank(validateErrorMessage)){
+            this.addError("error", errorValue);
+            this.addError("errorMessage", validateErrorMessage);
+        }
+        return this;
+    }
+
+    public ValidResult mongoValid(MongoValidate validate){
+        return this.mongoValid(validate,"100");
+    }
+
+    public ValidResult mongoValid(MongoValidate validate,Object errorValue){
+        if (!validate.validation()){
+            this.addError("error",errorValue);
+            this.addError("errorMessage", validate.getErrorMessage());
+        }
+        return this;
+    }
+
 }
