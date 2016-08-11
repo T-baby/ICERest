@@ -28,5 +28,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
 public @interface Interceptors {
-  Class<? extends Interceptor>[] value();
+    Class<? extends Interceptor>[] value();
 }

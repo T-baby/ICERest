@@ -8,6 +8,6 @@ import com.cybermkd.route.core.RouteMatch;
  */
 public abstract class Validator {
 
-  public abstract ValidResult validate(Params params,RouteMatch routeMatch);
+    public abstract ValidResult validate(Params params, RouteMatch routeMatch);
 
 }

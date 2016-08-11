@@ -12,43 +12,43 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class SpringPlugin implements Plugin {
 
-  private String[] configFiles;
-  private Class[] configClasses;
-  private ConfigurableApplicationContext context;
+    private String[] configFiles;
+    private Class[] configClasses;
+    private ConfigurableApplicationContext context;
 
-  /**
-   * Use configuration under the path of WebRoot/WEB-INF.
-   */
-  public SpringPlugin() {
-    this.configFiles = new String[]{"classpath:applicationContext.xml"};
-  }
-
-  public SpringPlugin(String... configFiles) {
-    this.configFiles = configFiles;
-  }
-
-  public SpringPlugin(ConfigurableApplicationContext context) {
-    this.context = context;
-  }
-
-  public SpringPlugin(Class... configClasses) {
-    this.configClasses = configClasses;
-  }
-
-  public boolean start() {
-    if (this.context == null) {
-      if (configFiles == null) {
-        this.context = new AnnotationConfigApplicationContext(configClasses);
-      } else {
-        this.context = new ClassPathXmlApplicationContext(configFiles);
-      }
+    /**
+     * Use configuration under the path of WebRoot/WEB-INF.
+     */
+    public SpringPlugin() {
+        this.configFiles = new String[]{"classpath:applicationContext.xml"};
     }
-    SpringBuilder.setContext(context);
-    return true;
-  }
 
-  public boolean stop() {
-    SpringBuilder.removeContext();
-    return true;
-  }
+    public SpringPlugin(String... configFiles) {
+        this.configFiles = configFiles;
+    }
+
+    public SpringPlugin(ConfigurableApplicationContext context) {
+        this.context = context;
+    }
+
+    public SpringPlugin(Class... configClasses) {
+        this.configClasses = configClasses;
+    }
+
+    public boolean start() {
+        if (this.context == null) {
+            if (configFiles == null) {
+                this.context = new AnnotationConfigApplicationContext(configClasses);
+            } else {
+                this.context = new ClassPathXmlApplicationContext(configFiles);
+            }
+        }
+        SpringBuilder.setContext(context);
+        return true;
+    }
+
+    public boolean stop() {
+        SpringBuilder.removeContext();
+        return true;
+    }
 }

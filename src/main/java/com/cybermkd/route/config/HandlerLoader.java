@@ -11,15 +11,15 @@ import java.util.List;
  */
 final public class HandlerLoader {
 
-  private final List<Handler> handlerList = new ArrayList<Handler>();
+    private final List<Handler> handlerList = new ArrayList<Handler>();
 
-  public HandlerLoader add(Handler handler) {
-    if (handler != null)
-      handlerList.add(handler);
-    return this;
-  }
+    public HandlerLoader add(Handler handler) {
+        if (handler != null)
+            handlerList.add(handler);
+        return this;
+    }
 
-  public List<Handler> getHandlerList() {
-    return handlerList;
-  }
+    public List<Handler> getHandlerList() {
+        return handlerList;
+    }
 }

@@ -9,7 +9,7 @@ import java.util.TreeSet;
  */
 public class CaseInsensitiveSet extends TreeSet<String> {
 
-  public CaseInsensitiveSet() {
-    super(String.CASE_INSENSITIVE_ORDER);
-  }
+    public CaseInsensitiveSet() {
+        super(String.CASE_INSENSITIVE_ORDER);
+    }
 }

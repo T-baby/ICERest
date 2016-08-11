@@ -7,5 +7,5 @@ import com.cybermkd.route.core.RouteInvocation;
  * Interceptor.
  */
 public interface Interceptor {
-  public void intercept(RouteInvocation ri);
+    public void intercept(RouteInvocation ri);
 }

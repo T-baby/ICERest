@@ -9,7 +9,7 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Documented
 public @interface API {
-  String value();
+    String value();
 
-  String[] headers() default {};
+    String[] headers() default {};
 }

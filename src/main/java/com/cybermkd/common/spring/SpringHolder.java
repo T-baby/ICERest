@@ -6,5 +6,5 @@ package com.cybermkd.common.spring;
  * @what
  */
 public class SpringHolder {
-  public static boolean alive = false;
+    public static boolean alive = false;
 }

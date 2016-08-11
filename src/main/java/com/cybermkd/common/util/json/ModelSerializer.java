@@ -16,46 +16,46 @@ import java.util.Map;
  * Created by ice on 14-12-31.
  */
 public enum ModelSerializer implements ObjectSerializer {
-  INSTANCE;
+    INSTANCE;
 
-  public static ModelSerializer instance() {
-    return INSTANCE;
-  }
-
-
-  public void write(JSONSerializer serializer, Object object, Object fieldName, Type fieldType, int features) throws IOException {
-    if (object == null) {
-      serializer.writeNull();
-      return;
+    public static ModelSerializer instance() {
+        return INSTANCE;
     }
 
-    String mName;
-    if (object instanceof Entity) {
-      if (((Entity) object).checkMethod()) {
-        Method[] methods = object.getClass().getDeclaredMethods();
-        JSONField fieldAnn = null;
-        for (Method m : methods) {
-          fieldAnn = m.getAnnotation(JSONField.class);
-          mName = m.getName();
-          if ((fieldAnn == null || fieldAnn.serialize()) && m.getParameterTypes().length == 0 && mName.length() > 3 && mName.startsWith("get")
-              && !hasMethod((Entity) object, mName)) {
-            try {
-              m.invoke(object);
-            } catch (Exception e) {
-              throw new JSONException("Method could not invoke.", e);
-            }
-          }
+
+    public void write(JSONSerializer serializer, Object object, Object fieldName, Type fieldType, int features) throws IOException {
+        if (object == null) {
+            serializer.writeNull();
+            return;
         }
-      }
-      serializer.write(((Entity) object).getAttrs());
+
+        String mName;
+        if (object instanceof Entity) {
+            if (((Entity) object).checkMethod()) {
+                Method[] methods = object.getClass().getDeclaredMethods();
+                JSONField fieldAnn = null;
+                for (Method m : methods) {
+                    fieldAnn = m.getAnnotation(JSONField.class);
+                    mName = m.getName();
+                    if ((fieldAnn == null || fieldAnn.serialize()) && m.getParameterTypes().length == 0 && mName.length() > 3 && mName.startsWith("get")
+                            && !hasMethod((Entity) object, mName)) {
+                        try {
+                            m.invoke(object);
+                        } catch (Exception e) {
+                            throw new JSONException("Method could not invoke.", e);
+                        }
+                    }
+                }
+            }
+            serializer.write(((Entity) object).getAttrs());
+        }
+
     }
 
-  }
-
-  private boolean hasMethod(Entity object, String mName) {
-    Map<String, Object> attrs = (Map<String, Object>) object.getAttrs();
-    String name = mName.replace("get", "");
-    return attrs.containsKey(Stringer.firstLowerCase(name))
-        || attrs.containsKey(Stringer.underlineCase(name));
-  }
+    private boolean hasMethod(Entity object, String mName) {
+        Map<String, Object> attrs = (Map<String, Object>) object.getAttrs();
+        String name = mName.replace("get", "");
+        return attrs.containsKey(Stringer.firstLowerCase(name))
+                || attrs.containsKey(Stringer.underlineCase(name));
+    }
 }

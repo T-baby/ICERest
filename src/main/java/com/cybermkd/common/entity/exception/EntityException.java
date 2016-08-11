@@ -5,20 +5,20 @@ package com.cybermkd.common.entity.exception;
  */
 public class EntityException extends RuntimeException {
 
-  public EntityException() {
-  }
+    public EntityException() {
+    }
 
-  public EntityException(String message) {
-    super(message);
-  }
+    public EntityException(String message) {
+        super(message);
+    }
 
-  public EntityException(Throwable cause) {
-    super(cause);
-  }
+    public EntityException(Throwable cause) {
+        super(cause);
+    }
 
-  public EntityException(String message, Throwable cause) {
-    super(message, cause);
-  }
+    public EntityException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
 
 

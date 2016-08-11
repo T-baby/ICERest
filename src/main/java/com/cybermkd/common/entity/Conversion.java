@@ -5,7 +5,7 @@ package com.cybermkd.common.entity;
  */
 public interface Conversion {
 
-  public Object read(Object v);
+    public Object read(Object v);
 
-  public Object write(Object v);
+    public Object write(Object v);
 }
