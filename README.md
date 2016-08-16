@@ -12,7 +12,7 @@ ICEREST是一个非常轻量级只有200k左右的RESTful路由框架，通过IC
 
 - 支持AOP，拦截器配置灵活，配合[MongoPlugin](https://github.com/T-baby/MongoDB-Plugin)轻松校验传输数据。
 
-- 与MOTAN无缝结合（正在研发ing）。
+- 与MOTAN无缝结合。
 
 # RESTful是什么？
 
