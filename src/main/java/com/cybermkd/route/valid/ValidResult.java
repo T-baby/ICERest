@@ -49,29 +49,25 @@ public class ValidResult {
     }
 
 
+
+    public ValidResult mongoValid(MongoValidate validate){
+        return this.mongoValid(validate);
+    }
+
     public ValidResult mongoValid(MongoValidate validate,String... keys){
         return this.mongoValid(validate, "100",keys);
     }
     public ValidResult mongoValid(MongoValidate validate, Object errorValue,String... keys){
         String validateErrorMessage = MongoKit.validation(validate,keys);
-        if(Stringer.isBlank(validateErrorMessage)){
+        if(!Stringer.isBlank(validateErrorMessage)){
             this.addError("error", errorValue);
             this.addError("errorMessage", validateErrorMessage);
         }
         return this;
     }
 
-    public ValidResult mongoValid(MongoValidate validate){
-        return this.mongoValid(validate,"100");
-    }
 
-    public ValidResult mongoValid(MongoValidate validate,Object errorValue){
-        if (!validate.validation()){
-            this.addError("error",errorValue);
-            this.addError("errorMessage", validate.errorMessage());
-        }
-        return this;
-    }
+
 
     public boolean isError(){
         return errors.size() > 0;

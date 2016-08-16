@@ -5,11 +5,16 @@
 
     <groupId>com.cybermkd</groupId>
     <artifactId>ICEREST</artifactId>
-    <version>1.0.1.1</version>
+    <version>1.0.1.2</version>
     <name>ICEREST</name>
     <description>一个极简的restful框架</description>
     <url>https://github.com/T-baby/ICEREST</url>
-
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>utf-8</project.reporting.outputEncoding>
+    </properties>
     <issueManagement>
         <system>Github Issue</system>
         <url>https://github.com/T-baby/ICEREST/issues</url>
@@ -38,10 +43,7 @@
         <url>git@github.com:T-baby/ICEREST.git</url>
     </scm>
 
-    <properties>
-        <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>utf-8</project.reporting.outputEncoding>
-    </properties>
+
 
 
     <dependencies>
@@ -126,7 +128,25 @@
     </dependencies>
     <build>
         <finalName>ICEREST</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
+
+
 
     <profiles>
         <profile>
@@ -191,6 +211,11 @@
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <version>3.0.2</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
                         <version>3.3</version>
                         <configuration>
@@ -198,6 +223,7 @@
                             <target>1.8</target>
                         </configuration>
                     </plugin>
+
                 </plugins>
             </build>
         </profile>
