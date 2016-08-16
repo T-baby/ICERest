@@ -68,7 +68,7 @@ public class ValidResult {
     public ValidResult mongoValid(MongoValidate validate,Object errorValue){
         if (!validate.validation()){
             this.addError("error",errorValue);
-            this.addError("errorMessage", validate.getErrorMessage());
+            this.addError("errorMessage", validate.errorMessage());
         }
         return this;
     }
