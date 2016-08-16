@@ -5,7 +5,7 @@
 
     <groupId>com.cybermkd</groupId>
     <artifactId>ICEREST</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.1.1</version>
     <name>ICEREST</name>
     <description>一个极简的restful框架</description>
     <url>https://github.com/T-baby/ICEREST</url>
@@ -111,7 +111,7 @@
         <dependency>
             <groupId>com.cybermkd</groupId>
             <artifactId>MongodbPlugin</artifactId>
-            <version>1.0.6</version>
+            <version>1.0.6.3</version>
             <scope>provided</scope>
         </dependency>
 
