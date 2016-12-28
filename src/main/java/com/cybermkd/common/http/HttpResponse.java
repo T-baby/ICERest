@@ -2,6 +2,7 @@ package com.cybermkd.common.http;
 
 import com.cybermkd.common.Response;
 import com.cybermkd.common.http.result.HttpStatus;
+import com.cybermkd.common.util.Stringer;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletResponse;
@@ -36,16 +37,23 @@ public class HttpResponse extends AbstractResponse<HttpServletResponse> {
     }
 
     public Response addCookie(String name, String value, int expiration) {
-        return addCookie(name, value, expiration, true);
+        return addCookie(name, value, expiration, "", false);
     }
 
-    public Response addCookie(String name, String value, int expiration, boolean httpOnly) {
+    public Response addCookie(String name, String value, int expiration, String domain) {
+        return addCookie(name, value, expiration, domain, false);
+    }
+
+    public Response addCookie(String name, String value, int expiration, String domain, boolean httpOnly) {
         Cookie existingCookie = HttpRequest.getCookie(request.getCookies(), name);
         if (existingCookie != null) {
             if ("/".equals(existingCookie.getPath())
                     || existingCookie.getPath() == null // in some cases cookies set on path '/' are returned with a null path
                     ) {
                 // update existing cookie
+                if (Stringer.notBlank(domain)) {
+                    existingCookie.setDomain(domain);
+                }
                 existingCookie.setPath("/");
                 existingCookie.setValue(value);
                 existingCookie.setMaxAge(expiration);
@@ -58,16 +66,22 @@ public class HttpResponse extends AbstractResponse<HttpServletResponse> {
                 response.addCookie(existingCookie);
 
                 Cookie c = new Cookie(name, value);
+                if (Stringer.notBlank(domain)) {
+                    c.setDomain(domain);
+                }
                 c.setPath("/");
                 c.setMaxAge(expiration);
-//        c.setHttpOnly(httpOnly);
+                c.setHttpOnly(httpOnly);
                 response.addCookie(c);
             }
         } else {
             Cookie c = new Cookie(name, value);
+            if (Stringer.notBlank(domain)) {
+                c.setDomain(domain);
+            }
             c.setPath("/");
             c.setMaxAge(expiration);
-//      c.setHttpOnly(httpOnly);
+            c.setHttpOnly(httpOnly);
             response.addCookie(c);
         }
         return this;
@@ -77,6 +91,18 @@ public class HttpResponse extends AbstractResponse<HttpServletResponse> {
     public Response clearCookie(String cookie) {
         Cookie existingCookie = HttpRequest.getCookie(request.getCookies(), cookie);
         if (existingCookie != null) {
+            existingCookie.setPath("/");
+            existingCookie.setValue("");
+            existingCookie.setMaxAge(0);
+            response.addCookie(existingCookie);
+        }
+        return this;
+    }
+
+    public Response clearCookie(String cookie,String domain) {
+        Cookie existingCookie = HttpRequest.getCookie(request.getCookies(), cookie);
+        if (existingCookie != null) {
+            existingCookie.setDomain(domain);
             existingCookie.setPath("/");
             existingCookie.setValue("");
             existingCookie.setMaxAge(0);

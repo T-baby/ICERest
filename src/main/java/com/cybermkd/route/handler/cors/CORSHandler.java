@@ -1,6 +1,10 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by Fernflower decompiler)
+//
+
 package com.cybermkd.route.handler.cors;
 
-import com.cybermkd.common.http.HttpMethod;
 import com.cybermkd.common.http.HttpRequest;
 import com.cybermkd.common.http.HttpResponse;
 import com.cybermkd.common.http.exception.WebException;
@@ -11,17 +15,14 @@ import com.cybermkd.log.Logger;
 import com.cybermkd.route.handler.Handler;
 
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Created by ice on 14-12-22.
- */
 public class CORSHandler extends Handler {
     public static final String ACCESS_CONTROL_REQUEST_METHOD_HEADER = "Access-Control-Request-Method";
     public static final String ACCESS_CONTROL_REQUEST_HEADERS_HEADER = "Access-Control-Request-Headers";
-    // Response headers
     public static final String ACCESS_CONTROL_ALLOW_ORIGIN_HEADER = "Access-Control-Allow-Origin";
     public static final String ACCESS_CONTROL_ALLOW_METHODS_HEADER = "Access-Control-Allow-Methods";
     public static final String ACCESS_CONTROL_ALLOW_HEADERS_HEADER = "Access-Control-Allow-Headers";
@@ -29,253 +30,304 @@ public class CORSHandler extends Handler {
     public static final String ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER = "Access-Control-Allow-Credentials";
     public static final String ACCESS_CONTROL_EXPOSE_HEADERS_HEADER = "Access-Control-Expose-Headers";
     private static final Logger logger = Logger.getLogger(CORSHandler.class);
-    // Request headers
     private static final String ORIGIN_HEADER = "Origin";
-    // Implementation constants
-    private static final List<String> SIMPLE_HTTP_METHODS = Lister.of(HttpMethod.GET, HttpMethod.POST, HttpMethod.HEAD);
-
-    private boolean anyOriginAllowed = true;
-    private boolean anyHeadersAllowed = false;
-    private List<String> allowedOrigins = Lister.of("*");
-    private List<String> allowedMethods = Lister.of(HttpMethod.GET, HttpMethod.POST, HttpMethod.HEAD);
-    private List<String> allowedHeaders = Lister.of("X-Requested-With", "Content-Type", "Accept", "Origin");
-    private List<String> exposedHeaders = null;
-    private int preflightMaxAge = 1800;
-    private boolean allowCredentials = true;
-    private boolean chainPreflight = true;
+    private static final List<String> SIMPLE_HTTP_METHODS = Lister.of(new Object[]{"GET", "POST", "HEAD"});
+    private boolean anyOriginAllowed;
+    private boolean anyHeadersAllowed;
+    private List<String> allowedOrigins;
+    private List<String> allowedMethods;
+    private List<String> allowedHeaders;
+    private List<String> exposedHeaders;
+    private int preflightMaxAge;
+    private boolean allowCredentials;
+    private boolean chainPreflight;
 
     public CORSHandler() {
+        this.anyOriginAllowed = true;
+        this.anyHeadersAllowed = false;
+        this.allowedOrigins = Lister.of(new Object[]{"*"});
+        this.allowedMethods = Lister.of(new Object[]{"GET", "POST", "HEAD"});
+        this.allowedHeaders = Lister.of(new Object[]{"X-Requested-With", "Content-Type", "Accept", "Origin"});
+        this.exposedHeaders = null;
+        this.preflightMaxAge = 1800;
+        this.allowCredentials = true;
+        this.chainPreflight = true;
     }
 
     public CORSHandler(String allowedMethods) {
-        this(null, allowedMethods, null);
+        this((String)null, allowedMethods, (String)null);
     }
 
     public CORSHandler(String allowedMethods, String allowedHeaders) {
-        this(null, allowedMethods, allowedHeaders);
+        this((String)null, allowedMethods, allowedHeaders);
     }
 
     public CORSHandler(String allowedOrigins, String allowedMethods, String allowedHeaders) {
-        this(allowedOrigins, allowedMethods, allowedHeaders, null);
+        this(allowedOrigins, allowedMethods, allowedHeaders, (String)null);
     }
 
-    /**
-     * @param allowedOrigins Multiple origins allowed, separated default *
-     * @param allowedMethods Multiple httpMethods allowed, separated default GET,POST,HEAD
-     * @param allowedHeaders Multiple headers allowed, separated default X-Requested-With,Content-Type,Accept,Origin
-     * @param exposedHeaders Multiple origins expose, separated default null
-     */
     public CORSHandler(String allowedOrigins, String allowedMethods, String allowedHeaders, String exposedHeaders) {
-        if (allowedOrigins != null)
+        this.anyOriginAllowed = true;
+        this.anyHeadersAllowed = false;
+        this.allowedOrigins = Lister.of(new Object[]{"*"});
+        this.allowedMethods = Lister.of(new Object[]{"GET", "POST", "HEAD"});
+        this.allowedHeaders = Lister.of(new Object[]{"X-Requested-With", "Content-Type", "Accept", "Origin"});
+        this.exposedHeaders = null;
+        this.preflightMaxAge = 1800;
+        this.allowCredentials = true;
+        this.chainPreflight = true;
+        if(allowedOrigins != null) {
             this.allowedOrigins = Lister.of(allowedOrigins.split(","));
-        if (allowedMethods != null)
+        }
+
+        if(allowedMethods != null) {
             this.allowedMethods = Lister.of(allowedMethods.split(","));
-        if (allowedHeaders != null)
+        }
+
+        if(allowedHeaders != null) {
             this.allowedHeaders = Lister.of(allowedHeaders.split(","));
-        if (exposedHeaders != null)
+        }
+
+        if(exposedHeaders != null) {
             this.exposedHeaders = Lister.of(exposedHeaders.split(","));
+        }
+
     }
 
     public final void handle(HttpRequest request, HttpResponse response, boolean[] isHandled) {
-        String origin = request.getHeader(ORIGIN_HEADER);
-        // Is it a cross origin request ?
-        if (origin != null && isEnabled(request)) {
-            if (originMatches(origin)) {
-                if (isSimpleRequest(request)) {
-                    logger.debug("Cross-origin request to %s is a simple cross-origin request", request.getRestPath());
-                    handleSimpleResponse(request, response, origin);
-                } else if (isPreflightRequest(request)) {
-                    logger.debug("Cross-origin request to %s is a preflight cross-origin request", request.getRestPath());
-                    handlePreflightResponse(request, response, origin);
-                    if (chainPreflight)
-                        logger.debug("Preflight cross-origin request to %s forwarded to application", request.getRestPath());
-                    else
+        String origin = request.getHeader("Origin");
+        if(origin != null && this.isEnabled(request)) {
+            if(this.originMatches(origin)) {
+                if(this.isSimpleRequest(request)) {
+                    logger.debug("Cross-origin request to %s is a simple cross-origin request", new Object[]{request.getRestPath()});
+                    this.handleSimpleResponse(request, response, origin);
+                } else if(this.isPreflightRequest(request)) {
+                    logger.debug("Cross-origin request to %s is a preflight cross-origin request", new Object[]{request.getRestPath()});
+                    this.handlePreflightResponse(request, response, origin);
+                    if(!this.chainPreflight) {
                         throw new WebException(HttpStatus.FORBIDDEN, "Unauthorized CORS request");
+                    }
+
+                    logger.debug("Preflight cross-origin request to %s forwarded to application", new Object[]{request.getRestPath()});
                 } else {
-                    logger.debug("Cross-origin request to %s is a non-simple cross-origin request", request.getRestPath());
-                    handleSimpleResponse(request, response, origin);
+                    logger.debug("Cross-origin request to %s is a non-simple cross-origin request", new Object[]{request.getRestPath()});
+                    this.handleSimpleResponse(request, response, origin);
                 }
             } else {
-                logger.debug("Cross-origin request to " + request.getRestPath() + " with origin " + origin + " does not match allowed origins " + allowedOrigins);
+                logger.debug("Cross-origin request to " + request.getRestPath() + " with origin " + origin + " does not match allowed origins " + this.allowedOrigins);
             }
         }
-        nextHandler.handle(request, response, isHandled);
+
+        this.nextHandler.handle(request, response, isHandled);
     }
 
     protected boolean isEnabled(HttpRequest request) {
-        // WebSocket clients such as Chrome 5 implement a version of the WebSocket
-        // protocol that does not accept extra response headers on the upgrade response
-        for (Enumeration connections = request.getHeaders("Connection"); connections.hasMoreElements(); ) {
-            String connection = (String) connections.nextElement();
-            if ("Upgrade".equalsIgnoreCase(connection)) {
-                for (Enumeration upgrades = request.getHeaders("Upgrade"); upgrades.hasMoreElements(); ) {
-                    String upgrade = (String) upgrades.nextElement();
-                    if ("WebSocket".equalsIgnoreCase(upgrade))
-                        return false;
+        Enumeration connections = request.getHeaders("Connection");
+
+        while(true) {
+            String connection;
+            do {
+                if(!connections.hasMoreElements()) {
+                    return true;
+                }
+
+                connection = (String)connections.nextElement();
+            } while(!"Upgrade".equalsIgnoreCase(connection));
+
+            Enumeration upgrades = request.getHeaders("Upgrade");
+
+            while(upgrades.hasMoreElements()) {
+                String upgrade = (String)upgrades.nextElement();
+                if("WebSocket".equalsIgnoreCase(upgrade)) {
+                    return false;
                 }
             }
         }
-        return true;
     }
 
     private boolean originMatches(String originList) {
-        if (anyOriginAllowed)
+        if(this.anyOriginAllowed) {
             return true;
-
-        if (originList.trim().length() == 0)
+        } else if(originList.trim().length() == 0) {
             return false;
+        } else {
+            String[] origins = originList.split(" ");
+            String[] var3 = origins;
+            int var4 = origins.length;
 
-        String[] origins = originList.split(" ");
-        for (String origin : origins) {
-            if (origin.trim().length() == 0)
-                continue;
+            for(int var5 = 0; var5 < var4; ++var5) {
+                String origin = var3[var5];
+                if(origin.trim().length() != 0) {
+                    Iterator var7 = this.allowedOrigins.iterator();
 
-            for (String allowedOrigin : allowedOrigins) {
-                if (allowedOrigin.contains("*")) {
-                    Matcher matcher = createMatcher(origin, allowedOrigin);
-                    if (matcher.matches())
-                        return true;
-                } else if (allowedOrigin.equals(origin)) {
-                    return true;
+                    while(var7.hasNext()) {
+                        String allowedOrigin = (String)var7.next();
+                        if(allowedOrigin.contains("*")) {
+                            Matcher matcher = this.createMatcher(origin, allowedOrigin);
+                            if(matcher.matches()) {
+                                return true;
+                            }
+                        } else if(allowedOrigin.equals(origin)) {
+                            return true;
+                        }
+                    }
                 }
             }
+
+            return false;
         }
-        return false;
     }
 
     private Matcher createMatcher(String origin, String allowedOrigin) {
-        String regex = parseAllowedWildcardOriginToRegex(allowedOrigin);
+        String regex = this.parseAllowedWildcardOriginToRegex(allowedOrigin);
         Pattern pattern = Pattern.compile(regex);
         return pattern.matcher(origin);
     }
 
     private String parseAllowedWildcardOriginToRegex(String allowedOrigin) {
         String regex = allowedOrigin.replace(".", "\\.");
-        return regex.replace("*", ".*"); // we want to be greedy here to match multiple subdomains, thus we use .*
+        return regex.replace("*", ".*");
     }
 
     private boolean isSimpleRequest(HttpRequest request) {
-
-        if (SIMPLE_HTTP_METHODS.contains(request.getHttpMethod())) {
-            // TODO: implement better detection of simple headers
-            // The specification says that for a request to be simple, custom request headers must be simple.
-            // Here for simplicity I just check if there is a Access-Control-Request-Method header,
-            // which is required for preflight requests
-            return request.getHeader(ACCESS_CONTROL_REQUEST_METHOD_HEADER) == null;
-        }
-        return false;
+        return SIMPLE_HTTP_METHODS.contains(request.getHttpMethod())?request.getHeader("Access-Control-Request-Method") == null:false;
     }
 
     private boolean isPreflightRequest(HttpRequest request) {
-        if (HttpMethod.OPTIONS.equalsIgnoreCase(request.getHttpMethod())) {
-            return true;
-        }
-        if (request.getHeader(ACCESS_CONTROL_REQUEST_METHOD_HEADER) == null) {
-            return false;
-        }
-        return true;
+        return "OPTIONS".equalsIgnoreCase(request.getHttpMethod())?true:request.getHeader("Access-Control-Request-Method") != null;
     }
 
     private void handleSimpleResponse(HttpRequest request, HttpResponse response, String origin) {
-        response.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN_HEADER, origin);
-        //W3C CORS spec http://www.w3.org/TR/cors/#resource-implementation
-        if (!anyOriginAllowed)
-            response.addHeader("Vary", ORIGIN_HEADER);
-        if (allowCredentials)
-            response.setHeader(ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER, "true");
-        if (exposedHeaders != null && !exposedHeaders.isEmpty())
-            response.setHeader(ACCESS_CONTROL_EXPOSE_HEADERS_HEADER, Joiner.on(",").join(exposedHeaders));
+        response.setHeader("Access-Control-Allow-Origin", origin);
+        /*允许附带cookie*/
+        response.setHeader("Access-Control-Allow-Credentials","true");
+        if(!this.anyOriginAllowed) {
+            response.addHeader("Vary", "Origin");
+        }
+
+        if(this.allowCredentials) {
+            response.setHeader("Access-Control-Allow-Credentials", "true");
+        }
+
+        if(this.exposedHeaders != null && !this.exposedHeaders.isEmpty()) {
+            response.setHeader("Access-Control-Expose-Headers", Joiner.on(",").join(this.exposedHeaders));
+        }
+
     }
 
     private void handlePreflightResponse(HttpRequest request, HttpResponse response, String origin) {
-        boolean methodAllowed = isMethodAllowed(request);
+        boolean methodAllowed = this.isMethodAllowed(request);
+        if(methodAllowed) {
+            List headersRequested = this.getAccessControlRequestHeaders(request);
+            boolean headersAllowed = this.areHeadersAllowed(headersRequested);
+            if(headersAllowed) {
+                response.setHeader("Access-Control-Allow-Origin", origin);
+                  /*允许附带cookie*/
+                response.setHeader("Access-Control-Allow-Credentials","true");
+                if(!this.anyOriginAllowed) {
+                    response.addHeader("Vary", "Origin");
+                }
 
-        if (!methodAllowed)
-            return;
-        List<String> headersRequested = getAccessControlRequestHeaders(request);
-        boolean headersAllowed = areHeadersAllowed(headersRequested);
-        if (!headersAllowed)
-            return;
-        response.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN_HEADER, origin);
-        //W3C CORS spec http://www.w3.org/TR/cors/#resource-implementation
-        if (!anyOriginAllowed)
-            response.addHeader("Vary", ORIGIN_HEADER);
-        if (allowCredentials)
-            response.setHeader(ACCESS_CONTROL_ALLOW_CREDENTIALS_HEADER, "true");
-        if (preflightMaxAge > 0)
-            response.setHeader(ACCESS_CONTROL_MAX_AGE_HEADER, String.valueOf(preflightMaxAge));
-        response.setHeader(ACCESS_CONTROL_ALLOW_METHODS_HEADER, Joiner.on(",").join(allowedMethods));
-        if (anyHeadersAllowed)
-            response.setHeader(ACCESS_CONTROL_ALLOW_HEADERS_HEADER, Joiner.on(",").join(headersRequested));
-        else
-            response.setHeader(ACCESS_CONTROL_ALLOW_HEADERS_HEADER, Joiner.on(",").join(allowedHeaders));
+                if(this.allowCredentials) {
+                    response.setHeader("Access-Control-Allow-Credentials", "true");
+                }
+
+                if(this.preflightMaxAge > 0) {
+                    response.setHeader("Access-Control-Max-Age", String.valueOf(this.preflightMaxAge));
+                }
+
+                response.setHeader("Access-Control-Allow-Methods", Joiner.on(",").join(this.allowedMethods));
+                if(this.anyHeadersAllowed) {
+                    response.setHeader("Access-Control-Allow-Headers", Joiner.on(",").join(headersRequested));
+                } else {
+                    response.setHeader("Access-Control-Allow-Headers", Joiner.on(",").join(this.allowedHeaders));
+                }
+
+            }
+        }
     }
 
     private boolean isMethodAllowed(HttpRequest request) {
-        String accessControlRequestMethod = request.getHeader(ACCESS_CONTROL_REQUEST_METHOD_HEADER);
-        logger.debug("%s is %s", ACCESS_CONTROL_REQUEST_METHOD_HEADER, accessControlRequestMethod);
+        String accessControlRequestMethod = request.getHeader("Access-Control-Request-Method");
+        logger.debug("%s is %s", new Object[]{"Access-Control-Request-Method", accessControlRequestMethod});
         boolean result = false;
-        if (accessControlRequestMethod != null)
-            result = allowedMethods.contains(accessControlRequestMethod);
-        logger.debug("Method %s is" + (result ? "" : " not") + " among allowed methods %s", accessControlRequestMethod, allowedMethods);
+        if(accessControlRequestMethod != null) {
+            result = this.allowedMethods.contains(accessControlRequestMethod);
+        }
+
+        logger.debug("Method %s is" + (result?"":" not") + " among allowed methods %s", new Object[]{accessControlRequestMethod, this.allowedMethods});
         return result;
     }
 
     List<String> getAccessControlRequestHeaders(HttpRequest request) {
-        String accessControlRequestHeaders = request.getHeader(ACCESS_CONTROL_REQUEST_HEADERS_HEADER);
-        logger.debug("%s is %s", ACCESS_CONTROL_REQUEST_HEADERS_HEADER, accessControlRequestHeaders);
-        if (accessControlRequestHeaders == null)
-            return Lister.of();
+        String accessControlRequestHeaders = request.getHeader("Access-Control-Request-Headers");
+        logger.debug("%s is %s", new Object[]{"Access-Control-Request-Headers", accessControlRequestHeaders});
+        if(accessControlRequestHeaders == null) {
+            return Lister.of(new Object[0]);
+        } else {
+            List requestedHeaders = Lister.of(new Object[0]);
+            String[] headers = accessControlRequestHeaders.split(",");
+            String[] var5 = headers;
+            int var6 = headers.length;
 
-        List<String> requestedHeaders = Lister.of();
-        String[] headers = accessControlRequestHeaders.split(",");
-        for (String header : headers) {
-            String h = header.trim();
-            if (h.length() > 0)
-                requestedHeaders.add(h);
+            for(int var7 = 0; var7 < var6; ++var7) {
+                String header = var5[var7];
+                String h = header.trim();
+                if(h.length() > 0) {
+                    requestedHeaders.add(h);
+                }
+            }
+
+            return requestedHeaders;
         }
-        return requestedHeaders;
     }
 
-
     private boolean areHeadersAllowed(List<String> requestedHeaders) {
-        if (anyHeadersAllowed) {
+        if(this.anyHeadersAllowed) {
             logger.debug("Any header is allowed");
             return true;
-        }
+        } else {
+            boolean result = true;
+            Iterator var3 = requestedHeaders.iterator();
 
-        boolean result = true;
-        for (String requestedHeader : requestedHeaders) {
-            boolean headerAllowed = false;
-            for (String allowedHeader : allowedHeaders) {
-                if (requestedHeader.equalsIgnoreCase(allowedHeader.trim())) {
-                    headerAllowed = true;
+            while(var3.hasNext()) {
+                String requestedHeader = (String)var3.next();
+                boolean headerAllowed = false;
+                Iterator var6 = this.allowedHeaders.iterator();
+
+                while(var6.hasNext()) {
+                    String allowedHeader = (String)var6.next();
+                    if(requestedHeader.equalsIgnoreCase(allowedHeader.trim())) {
+                        headerAllowed = true;
+                        break;
+                    }
+                }
+
+                if(!headerAllowed) {
+                    result = false;
                     break;
                 }
             }
-            if (!headerAllowed) {
-                result = false;
-                break;
-            }
+
+            logger.debug("Headers [%s] are" + (result?"":" not") + " among allowed headers %s", new Object[]{requestedHeaders, this.allowedHeaders});
+            return result;
         }
-        logger.debug("Headers [%s] are" + (result ? "" : " not") + " among allowed headers %s", requestedHeaders, allowedHeaders);
-        return result;
     }
 
-
     public List<String> getAllowedOrigins() {
-        return allowedOrigins;
+        return this.allowedOrigins;
     }
 
     public void setAllowedOrigins(String... allowedOrigins) {
-        if (allowedOrigins.length == 1 && allowedOrigins[0].equals("*")) {
+        if(allowedOrigins.length == 1 && allowedOrigins[0].equals("*")) {
             this.anyOriginAllowed = true;
         }
+
         this.allowedOrigins = Lister.of(allowedOrigins);
     }
 
     public List<String> getAllowedMethods() {
-        return allowedMethods;
+        return this.allowedMethods;
     }
 
     public void setAllowedMethods(String... allowedMethods) {
@@ -283,18 +335,19 @@ public class CORSHandler extends Handler {
     }
 
     public List<String> getAllowedHeaders() {
-        return allowedHeaders;
+        return this.allowedHeaders;
     }
 
     public void setAllowedHeaders(String... allowedHeaders) {
-        if (allowedHeaders.length == 1 && allowedHeaders[0].equals("*")) {
+        if(allowedHeaders.length == 1 && allowedHeaders[0].equals("*")) {
             this.anyHeadersAllowed = true;
         }
+
         this.allowedHeaders = Lister.of(allowedHeaders);
     }
 
     public List<String> getExposedHeaders() {
-        return exposedHeaders;
+        return this.exposedHeaders;
     }
 
     public void setExposedHeaders(String... exposedHeaders) {
@@ -302,7 +355,7 @@ public class CORSHandler extends Handler {
     }
 
     public int getPreflightMaxAge() {
-        return preflightMaxAge;
+        return this.preflightMaxAge;
     }
 
     public void setPreflightMaxAge(int preflightMaxAge) {
@@ -310,7 +363,7 @@ public class CORSHandler extends Handler {
     }
 
     public boolean isAllowCredentials() {
-        return allowCredentials;
+        return this.allowCredentials;
     }
 
     public void setAllowCredentials(boolean allowCredentials) {
@@ -318,11 +371,10 @@ public class CORSHandler extends Handler {
     }
 
     public boolean isChainPreflight() {
-        return chainPreflight;
+        return this.chainPreflight;
     }
 
     public void setChainPreflight(boolean chainPreflight) {
         this.chainPreflight = chainPreflight;
     }
-
 }

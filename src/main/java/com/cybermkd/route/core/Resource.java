@@ -38,16 +38,28 @@ public abstract class Resource {
         return routeMatch.getResponse();
     }
 
-    final public String getCookie(String key){return getRequest().getCookieValue(key);}
+    final public String getCookie(String key) {
+        return getRequest().getCookieValue(key);
+    }
 
-    final public void setCookie(String key, String value){ getResponse().addCookie(key,value);}
+    final public void setCookie(String key, String value) {
+        getResponse().addCookie(key, value);
+    }
 
-    final public void setCookie(String key, String value, int age){ getResponse().addCookie(key,value,age);}
+    final public void setCookie(String key, String value, int age) {
+        getResponse().addCookie(key, value, age);
+    }
 
-    final public void delCookie(String key){getResponse().clearCookie(key);}
+    final public void setCookie(String key, String value, int age, String domain) {
+        getResponse().addCookie(key, value, age, domain);
+    }
 
-
-
+    final public void delCookie(String key) {
+        getResponse().clearCookie(key);
+    }
+    final public void delCookie(String key,String domain) {
+        getResponse().clearCookie(key,domain);
+    }
 
 }
 
