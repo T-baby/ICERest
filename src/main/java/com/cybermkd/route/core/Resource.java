@@ -1,6 +1,7 @@
 package com.cybermkd.route.core;
 
 
+import com.cybermkd.common.Constant;
 import com.cybermkd.common.http.HttpRequest;
 import com.cybermkd.common.http.HttpResponse;
 
@@ -51,7 +52,12 @@ public abstract class Resource {
     }
 
     final public void setCookie(String key, String value, int age, String domain) {
-        getResponse().addCookie(key, value, age, domain);
+        if (Constant.devMode){
+            getResponse().addCookie(key, value, age);
+        }else{
+            getResponse().addCookie(key, value, age, domain);
+        }
+
     }
 
     final public void delCookie(String key) {

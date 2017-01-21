@@ -1,29 +1,33 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by Fernflower decompiler)
+//
+
 package com.cybermkd.route.valid;
 
 import com.cybermkd.common.http.result.HttpStatus;
 import com.cybermkd.common.util.Stringer;
-import com.cybermkd.kit.MongoKit;
-import com.cybermkd.kit.MongoValidate;
+import com.cybermkd.mongo.kit.MongoKit;
+import com.cybermkd.mongo.kit.MongoValidate;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by ice on 15-1-26.
- */
 public class ValidResult {
-    private Map<String, Object> errors = new HashMap<String, Object>();
-
-    private HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
+    private Map<String, Object> errors = new HashMap();
+    private HttpStatus status;
 
     public ValidResult() {
+        this.status = HttpStatus.UNPROCESSABLE_ENTITY;
     }
 
     public ValidResult(Map<String, Object> errors) {
+        this.status = HttpStatus.UNPROCESSABLE_ENTITY;
         this.errors = errors;
     }
 
     public ValidResult(Map<String, Object> errors, HttpStatus status) {
+        this.status = HttpStatus.UNPROCESSABLE_ENTITY;
         this.errors = errors;
         this.status = status;
     }
@@ -33,7 +37,7 @@ public class ValidResult {
     }
 
     public Map<String, Object> getErrors() {
-        return errors;
+        return this.errors;
     }
 
     public void setErrors(Map<String, Object> errors) {
@@ -41,22 +45,20 @@ public class ValidResult {
     }
 
     public HttpStatus getStatus() {
-        return status;
+        return this.status;
     }
 
     public void setStatus(HttpStatus status) {
         this.status = status;
     }
 
-
     public ValidResult mongoValid(MongoValidate validate) {
-        return this.mongoValid(validate,"100",null);
+        return this.mongoValid(validate, "100", (String[])null);
     }
 
-    public ValidResult mongoValid(MongoValidate validate,Object errorValue) {
-        return this.mongoValid(validate,errorValue,null);
+    public ValidResult mongoValid(MongoValidate validate, Object errorValue) {
+        return this.mongoValid(validate, errorValue, (String[])null);
     }
-
 
     public ValidResult mongoValid(MongoValidate validate, String... keys) {
         return this.mongoValid(validate, "100", keys);
@@ -64,23 +66,22 @@ public class ValidResult {
 
     public ValidResult mongoValid(MongoValidate validate, Object errorValue, String[] keys) {
         String validateErrorMessage = "";
-        if (keys!=null&&keys.length > 0) {
+        if(keys != null && keys.length > 0) {
             validateErrorMessage = MongoKit.INSTANCE.validation(validate, keys);
         } else {
             validateErrorMessage = MongoKit.INSTANCE.validation(validate);
         }
 
-        if (!Stringer.isBlank(validateErrorMessage)) {
+        if(!Stringer.isBlank(validateErrorMessage)) {
             this.status = HttpStatus.BAD_REQUEST;
             this.addError("error", errorValue);
             this.addError("errorMessage", validateErrorMessage);
         }
+
         return this;
     }
 
-
     public boolean isError() {
-        return errors.size() > 0;
+        return this.errors.size() > 0;
     }
-
 }
