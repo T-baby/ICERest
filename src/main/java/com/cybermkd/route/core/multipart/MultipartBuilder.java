@@ -2,7 +2,7 @@ package com.cybermkd.route.core.multipart;
 
 import com.cybermkd.common.Constant;
 import com.cybermkd.common.http.HttpRequest;
-import com.cybermkd.common.http.exception.WebException;
+import com.cybermkd.common.http.exception.HttpException;
 import com.cybermkd.common.util.stream.FileRenamer;
 import com.cybermkd.log.Logger;
 import com.cybermkd.upload.MultipartRequest;
@@ -63,7 +63,7 @@ public class MultipartBuilder {
 
         if (!saveDir.exists()) {
             if (!saveDir.mkdirs()) {
-                throw new WebException("Directory " + saveDirectory + " not exists and can not create directory.");
+                throw new HttpException("Directory " + saveDirectory + " not exists and can not create directory.");
             }
         }
 
@@ -78,7 +78,7 @@ public class MultipartBuilder {
             MultipartRequest multipartRequest = new MultipartRequest(request, saveDir, maxPostSize, encoding, fileRenamer, uploadAllows, Constant.uploadDenieds);
             multipartParam = new MultipartParam(multipartRequest.getFiles(), multipartRequest.getParams());
         } catch (IOException e) {
-            throw new WebException(e.getMessage());
+            throw new HttpException(e.getMessage());
         }
         return multipartParam;
     }

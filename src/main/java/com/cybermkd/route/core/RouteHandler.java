@@ -3,7 +3,7 @@ package com.cybermkd.route.core;
 import com.cybermkd.common.http.HttpMethod;
 import com.cybermkd.common.http.HttpRequest;
 import com.cybermkd.common.http.HttpResponse;
-import com.cybermkd.common.http.exception.WebException;
+import com.cybermkd.common.http.exception.HttpException;
 import com.cybermkd.common.http.result.HttpStatus;
 import com.cybermkd.log.Logger;
 import com.cybermkd.route.handler.Handler;
@@ -68,7 +68,7 @@ public final class RouteHandler extends Handler {
         } else {
             if (!restPath.equals("/") && supportMethod) {
                 // no route matched
-                throw new WebException(HttpStatus.SERVICE_UNAVAILABLE, "API is unavailable,check request body.");
+                throw new HttpException(HttpStatus.SERVICE_UNAVAILABLE, "API is unavailable,check request body.");
             } else {
                 isHandled[0] = false;
             }

@@ -1,6 +1,6 @@
 package com.cybermkd.client;
 
-import com.cybermkd.client.exception.ClientException;
+import com.cybermkd.client.exception.HttpClientException;
 import com.cybermkd.common.http.ContentType;
 import com.cybermkd.common.http.HttpMethod;
 import com.cybermkd.common.util.stream.DefaultFileRenamer;
@@ -73,7 +73,7 @@ public class HttpClientConnection {
      */
     public void setRenamer(FileRenamer renamer) {
         if (renamer == null) {
-            throw new ClientException("FileRenamer must not null.");
+            throw new HttpClientException("FileRenamer must not null.");
         }
         this.renamer = renamer;
     }
@@ -85,7 +85,7 @@ public class HttpClientConnection {
             sslContext.init(null, tm, new java.security.SecureRandom());
             return sslContext.getSocketFactory();
         } catch (Exception e) {
-            throw new ClientException(e.getMessage(), e);
+            throw new HttpClientException(e.getMessage(), e);
         }
     }
 

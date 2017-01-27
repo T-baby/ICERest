@@ -7,7 +7,7 @@ package com.cybermkd.route.handler.cors;
 
 import com.cybermkd.common.http.HttpRequest;
 import com.cybermkd.common.http.HttpResponse;
-import com.cybermkd.common.http.exception.WebException;
+import com.cybermkd.common.http.exception.HttpException;
 import com.cybermkd.common.http.result.HttpStatus;
 import com.cybermkd.common.util.Joiner;
 import com.cybermkd.common.util.Lister;
@@ -105,7 +105,7 @@ public class CORSHandler extends Handler {
                     logger.debug("Cross-origin request to %s is a preflight cross-origin request", new Object[]{request.getRestPath()});
                     this.handlePreflightResponse(request, response, origin);
                     if(!this.chainPreflight) {
-                        throw new WebException(HttpStatus.FORBIDDEN, "Unauthorized CORS request");
+                        throw new HttpException(HttpStatus.FORBIDDEN, "Unauthorized CORS request");
                     }
 
                     logger.debug("Preflight cross-origin request to %s forwarded to application", new Object[]{request.getRestPath()});

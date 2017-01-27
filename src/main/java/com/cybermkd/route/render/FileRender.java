@@ -4,7 +4,7 @@ import com.cybermkd.common.Render;
 import com.cybermkd.common.http.ContentType;
 import com.cybermkd.common.http.HttpRequest;
 import com.cybermkd.common.http.HttpResponse;
-import com.cybermkd.common.http.exception.WebException;
+import com.cybermkd.common.http.exception.HttpException;
 import com.cybermkd.common.http.result.HttpStatus;
 import com.cybermkd.log.Logger;
 
@@ -27,9 +27,9 @@ public class FileRender extends Render {
             }
 
             if (file == null) {
-                throw new WebException(HttpStatus.NOT_FOUND, "File not support '" + out + "'.");
+                throw new HttpException(HttpStatus.NOT_FOUND, "File not support '" + out + "'.");
             } else if (!file.exists()) {
-                throw new WebException(HttpStatus.NOT_FOUND, "File not found '" + file.getName() + "'.");
+                throw new HttpException(HttpStatus.NOT_FOUND, "File not found '" + file.getName() + "'.");
             } else {
                 try {
                     long p = 0L;
@@ -118,7 +118,7 @@ public class FileRender extends Render {
                 } catch (IOException ie) {
                     // 忽略 ClientAbortException 之类的异常
                 } catch (Exception e) {
-                    throw new WebException(e.getMessage());
+                    throw new HttpException(e.getMessage());
                 }
             }
         }

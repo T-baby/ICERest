@@ -2,9 +2,10 @@ package com.cybermkd.route.core;
 
 import com.cybermkd.common.http.HttpRequest;
 import com.cybermkd.common.http.HttpResponse;
-import com.cybermkd.common.http.exception.WebException;
+import com.cybermkd.common.http.exception.HttpException;
+import com.cybermkd.common.http.result.ErrorResult;
+import com.cybermkd.common.http.result.HttpResult;
 import com.cybermkd.common.http.result.HttpStatus;
-import com.cybermkd.common.http.result.WebResult;
 import com.cybermkd.common.spring.SpringBuilder;
 import com.cybermkd.common.spring.SpringHolder;
 import com.cybermkd.log.Logger;
@@ -13,10 +14,12 @@ import com.cybermkd.route.render.RenderFactory;
 import com.cybermkd.route.valid.ValidResult;
 import com.cybermkd.route.valid.Validator;
 
+import javax.servlet.http.Cookie;
 import java.awt.image.RenderedImage;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -85,6 +88,8 @@ public class RouteInvocation {
                             args[i++] = routeMatch.getResponse();
                         } else if (Headers.class.isAssignableFrom(allParamTypes.get(i))) {
                             args[i++] = routeMatch.getHeaders();
+                        } else if (Cookies.class.isAssignableFrom(allParamTypes.get(i))) {
+                            args[i++] = routeMatch.getCookies();
                         } else if (Params.class.isAssignableFrom(allParamTypes.get(i))) {
                             args[i++] = routeMatch.getParams();
                         } else {
@@ -99,7 +104,11 @@ public class RouteInvocation {
                 //输出结果
                 render(invokeResult);
             } catch (Exception e) {
-                route.throwException(e);
+                if (e instanceof InvocationTargetException) {
+                    route.throwException(e.getCause());
+                } else {
+                    route.throwException(e);
+                }
             }
         }
     }
@@ -114,17 +123,24 @@ public class RouteInvocation {
         Object result;
         HttpRequest request = routeMatch.getRequest();
         HttpResponse response = routeMatch.getResponse();
-        //通过特定的webresult返回并携带状态码
-        if (invokeResult instanceof WebResult) {
-            WebResult webResult = (WebResult) invokeResult;
-            response.setStatus(webResult.getStatus());
-            Map<String, String> headers = webResult.getHeaders();
+        //通过特定的httpResult返回并携带状态码
+        if (invokeResult instanceof HttpResult) {
+            HttpResult httpResult = (HttpResult) invokeResult;
+            response.setStatus(httpResult.getStatus());
+            Map<String, String> headers = httpResult.getHeaders();
             if (headers != null && headers.size() > 0) {
                 for (Map.Entry<String, String> headersEntry : headers.entrySet()) {
                     response.setHeader(headersEntry.getKey(), headersEntry.getValue());
                 }
             }
-            result = webResult.getResult();
+            List<Cookie> cookies = httpResult.getCookies();
+            if (cookies != null && cookies.size() > 0) {
+                for (Cookie cookie : cookies) {
+                    response.addCookie(cookie);
+                }
+            }
+
+            result = httpResult.getResult();
         } else {
             result = invokeResult;
         }
@@ -153,26 +169,23 @@ public class RouteInvocation {
         Validator[] validators = route.getValidators();
 
         if (validators.length > 0) {
-            Map<String, Object> errors = new HashMap<String, Object>();
+            List<ErrorResult> errors = new ArrayList<ErrorResult>();
             HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
             ValidResult vr;
 
             for (Validator validator : validators) {
                 //数据验证
                 vr = validator.validate(params, routeMatch);
-                errors.putAll(vr.getErrors());
+                errors.addAll(vr.getErrors());
                 if (!status.equals(vr.getStatus()))
                     status = vr.getStatus();
-
-                if (errors.size() > 0) {
-                    throw new WebException(status, errors);
-                }
             }
 
-
+            if (errors.size() > 0) {
+                throw new HttpException(status, errors);
+            }
         }
     }
-
 
     public Method getMethod() {
         return route.getMethod();

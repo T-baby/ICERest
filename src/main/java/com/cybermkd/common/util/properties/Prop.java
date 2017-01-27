@@ -6,6 +6,7 @@ import com.cybermkd.log.Logger;
 
 import java.io.*;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * Prop. Prop can load properties file from CLASSPATH or File object.
@@ -31,10 +32,10 @@ public class Prop {
      * <p/>
      * Example:<br>
      * Prop prop = new Prop("my_config.txt", "UTF-8");<br>
-     * String userName = prop.get("userName");<br><br>
+     * String userName = prop.getMessage("userName");<br><br>
      * <p/>
-     * prop = new Prop("com/ICEREST/file_in_sub_path_of_classpath.txt", "UTF-8");<br>
-     * String value = prop.get("key");
+     * prop = new Prop("com/resty/file_in_sub_path_of_classpath.txt", "UTF-8");<br>
+     * String value = prop.getMessage("key");
      *
      * @param fileName the properties file's name in classpath or the sub directory of classpath
      * @param encoding the encoding
@@ -47,7 +48,7 @@ public class Prop {
     /**
      * Prop constructor.
      *
-     * @see #Prop(File, String)
+     * @see #Prop(java.io.File, String)
      */
     public Prop(File file) {
         this(file, Constant.encoding);
@@ -58,7 +59,7 @@ public class Prop {
      * <p/>
      * Example:<br>
      * Prop prop = new Prop(new File("/var/config/my_config.txt"), "UTF-8");<br>
-     * String userName = prop.get("userName");
+     * String userName = prop.getMessage("userName");
      *
      * @param file     the properties File object
      * @param encoding the encoding
@@ -93,6 +94,10 @@ public class Prop {
                 logger.warn(e.getMessage(), e);
             }
         }
+    }
+
+    public Set<String> getKeys() {
+        return properties.stringPropertyNames();
     }
 
     public String get(String key) {
@@ -154,4 +159,5 @@ public class Prop {
         }
         return rootClassPath;
     }
+
 }

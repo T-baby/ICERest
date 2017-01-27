@@ -2,7 +2,7 @@ package com.cybermkd.upload;
 
 import com.cybermkd.common.http.HttpRequest;
 import com.cybermkd.common.http.UploadedFile;
-import com.cybermkd.common.http.exception.WebException;
+import com.cybermkd.common.http.exception.HttpException;
 import com.cybermkd.common.util.Lister;
 import com.cybermkd.common.util.stream.FileRenamer;
 import com.cybermkd.log.Logger;
@@ -253,7 +253,7 @@ public class MultipartRequest {
                 filePart = (FilePart) part;
                 contentType = filePart.getContentType();
                 if ((allowTypes.size() > 0 && !allowTypes.contains(contentType)) || (deniedTypes.size() > 0 && deniedTypes.contains(contentType))) {
-                    throw new WebException("Denied upload file type '" + filePart.getContentType() + "'.");
+                    throw new HttpException("Denied upload file type '" + filePart.getContentType() + "'.");
                     //continue;
                 }
 

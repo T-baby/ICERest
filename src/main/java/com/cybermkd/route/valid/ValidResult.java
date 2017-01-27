@@ -5,47 +5,46 @@
 
 package com.cybermkd.route.valid;
 
+import com.cybermkd.common.http.result.ErrorResult;
 import com.cybermkd.common.http.result.HttpStatus;
 import com.cybermkd.common.util.Stringer;
 import com.cybermkd.mongo.kit.MongoKit;
 import com.cybermkd.mongo.kit.MongoValidate;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ValidResult {
-    private Map<String, Object> errors = new HashMap();
-    private HttpStatus status;
+    private List<ErrorResult> errors = new ArrayList<ErrorResult>();
+
+    private HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
 
     public ValidResult() {
-        this.status = HttpStatus.UNPROCESSABLE_ENTITY;
     }
 
-    public ValidResult(Map<String, Object> errors) {
-        this.status = HttpStatus.UNPROCESSABLE_ENTITY;
+    public ValidResult(List<ErrorResult> errors) {
         this.errors = errors;
     }
 
-    public ValidResult(Map<String, Object> errors, HttpStatus status) {
-        this.status = HttpStatus.UNPROCESSABLE_ENTITY;
+    public ValidResult(HttpStatus status, List<ErrorResult> errors) {
         this.errors = errors;
         this.status = status;
     }
 
-    public void addError(String name, Object error) {
-        this.errors.put(name, error);
+    public void addError(String name, String error) {
+        this.errors.add(new ErrorResult(name, error));
     }
 
-    public Map<String, Object> getErrors() {
-        return this.errors;
+    public List<ErrorResult> getErrors() {
+        return errors;
     }
 
-    public void setErrors(Map<String, Object> errors) {
+    public void setErrors(List<ErrorResult> errors) {
         this.errors = errors;
     }
 
     public HttpStatus getStatus() {
-        return this.status;
+        return status;
     }
 
     public void setStatus(HttpStatus status) {
@@ -56,15 +55,15 @@ public class ValidResult {
         return this.mongoValid(validate, "100", (String[])null);
     }
 
-    public ValidResult mongoValid(MongoValidate validate, Object errorValue) {
-        return this.mongoValid(validate, errorValue, (String[])null);
+    public ValidResult mongoValid(MongoValidate validate, String errorValue) {
+        return this.mongoValid(validate, errorValue, null);
     }
 
     public ValidResult mongoValid(MongoValidate validate, String... keys) {
         return this.mongoValid(validate, "100", keys);
     }
 
-    public ValidResult mongoValid(MongoValidate validate, Object errorValue, String[] keys) {
+    public ValidResult mongoValid(MongoValidate validate, String errorValue, String[] keys) {
         String validateErrorMessage = "";
         if(keys != null && keys.length > 0) {
             validateErrorMessage = MongoKit.INSTANCE.validation(validate, keys);

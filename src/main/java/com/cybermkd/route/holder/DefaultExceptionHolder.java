@@ -4,7 +4,7 @@ import com.cybermkd.common.Constant;
 import com.cybermkd.common.Render;
 import com.cybermkd.common.http.HttpRequest;
 import com.cybermkd.common.http.HttpResponse;
-import com.cybermkd.common.http.exception.WebException;
+import com.cybermkd.common.http.exception.HttpException;
 import com.cybermkd.common.http.result.HttpStatus;
 import com.cybermkd.common.util.json.Jsoner;
 import com.cybermkd.log.Logger;
@@ -20,8 +20,8 @@ public class DefaultExceptionHolder extends ExceptionHolder {
         String restPath = request.getRestPath();
         Render render = RenderFactory.getByUrl(restPath);
         String message;
-        if (exception instanceof WebException) {
-            WebException webException = (WebException) exception;
+        if (exception instanceof HttpException) {
+            HttpException webException = (HttpException) exception;
             //api访问 所有的异常 以httpStatus返回
             if (Constant.apiPrefix == null || restPath.startsWith(Constant.apiPrefix)) {
                 message = Jsoner.toJSON(webException.getContent());

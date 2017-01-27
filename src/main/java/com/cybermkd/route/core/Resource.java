@@ -52,19 +52,16 @@ public abstract class Resource {
     }
 
     final public void setCookie(String key, String value, int age, String domain) {
-        if (Constant.devMode){
+        if (Constant.devEnable) {
             getResponse().addCookie(key, value, age);
-        }else{
-            getResponse().addCookie(key, value, age, domain);
+        } else {
+            getResponse().addCookie(key, value, age, false);
         }
 
     }
 
     final public void delCookie(String key) {
         getResponse().clearCookie(key);
-    }
-    final public void delCookie(String key,String domain) {
-        getResponse().clearCookie(key,domain);
     }
 
 }

@@ -4,7 +4,7 @@ package com.cybermkd.route.core;
 import com.cybermkd.common.Constant;
 import com.cybermkd.common.entity.Entity;
 import com.cybermkd.common.http.*;
-import com.cybermkd.common.http.exception.WebException;
+import com.cybermkd.common.http.exception.HttpException;
 import com.cybermkd.common.http.result.HttpStatus;
 import com.cybermkd.common.util.Joiner;
 import com.cybermkd.common.util.analysis.ParamAttribute;
@@ -449,10 +449,10 @@ public class Route {
      * @param throwable
      */
     public void throwException(Throwable throwable) {
-        if (throwable instanceof WebException) {
-            throw (WebException) throwable;
+        if (throwable instanceof HttpException) {
+            throw (HttpException) throwable;
         } else {
-            WebException exception = getWebException(throwable, 0);
+            HttpException exception = getWebException(throwable, 0);
             Throwable cause = throwable.getCause();
             if (cause != null) {
                 logger.error("Route method invoke error.", cause);
@@ -463,15 +463,15 @@ public class Route {
         }
     }
 
-    private WebException getWebException(Throwable throwable, int deep) {
-        WebException result = null;
+    private HttpException getWebException(Throwable throwable, int deep) {
+        HttpException result = null;
 
         String message = throwable.getMessage();
         if (message == null) {
             Throwable cause = throwable.getCause();
             if (cause != null) {
-                if (cause instanceof WebException) {
-                    result = (WebException) cause;
+                if (cause instanceof HttpException) {
+                    result = (HttpException) cause;
                 } else {
                     message = cause.getMessage();
                     if (message == null && !throwable.equals(cause) && deep < 100) {
@@ -480,13 +480,13 @@ public class Route {
                 }
             }
         } else {
-            if (throwable instanceof WebException) {
-                result = (WebException) throwable;
+            if (throwable instanceof HttpException) {
+                result = (HttpException) throwable;
             }
         }
 
         if (result == null) {
-            result = new WebException(HttpStatus.INTERNAL_SERVER_ERROR, message);
+            result = new HttpException(HttpStatus.INTERNAL_SERVER_ERROR, message);
         }
         return result;
     }
@@ -507,7 +507,7 @@ public class Route {
         } catch (IOException e) {
             String msg = "Could not read inputStream when contentType is '" + request.getContentType() + "'.";
             logger.error(msg, e);
-            throw new WebException(msg);
+            throw new HttpException(msg);
         }
         return json;
     }

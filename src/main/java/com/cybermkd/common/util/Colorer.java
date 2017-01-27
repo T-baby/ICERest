@@ -43,7 +43,7 @@ public class Colorer {
     }
 
     private static String diy(String color, String value) {
-        if (Constant.devMode){
+        if (Constant.devEnable){
             return String.valueOf(Ansi.ansi().eraseScreen().render("@|" + color + " " + value + "|@"));
         }else {
             return value;

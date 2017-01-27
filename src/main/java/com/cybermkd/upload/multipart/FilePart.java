@@ -1,6 +1,6 @@
 package com.cybermkd.upload.multipart;
 
-import com.cybermkd.common.http.exception.WebException;
+import com.cybermkd.common.http.exception.HttpException;
 import com.cybermkd.common.util.stream.FileRenamer;
 
 import java.io.*;
@@ -169,7 +169,7 @@ public class FilePart extends Part {
                 File parent = file.getParentFile();
                 if (!parent.exists()) {
                     if (!parent.mkdirs()) {
-                        throw new WebException("Directory " + parent + " not exists and can not create directory.");
+                        throw new HttpException("Directory " + parent + " not exists and can not create directory.");
                     }
                 }
                 dir = parent;
