@@ -1,3 +1,5 @@
+ICEREST因为架构设计上的缺陷，建议切换到新项目https://github.com/cloudoptlab/cloudopt-next
+
 # ICEREST概述
 
 ![](http://i4.piimg.com/1949/9b7b792d5b9a1261.jpg)
